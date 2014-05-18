@@ -1,4 +1,4 @@
-from numpy import *
+import numpy as np
 from scipy import sparse
 
 
@@ -6,7 +6,7 @@ class  Mdct:
     """ Define the MDCT dictionary class used for Sparse decomposition """
     
 
-    def __init__(self,sizes=array([128,1024,8192]),window=lambda x: sin(pi*(x+1/2)/x.size) ):
+    def __init__(self,sizes=np.array([128,1024,8192]),window=lambda x: np.sin(np.pi*(x+1/2)/x.size) ):
         """ __init__:
             size (array) -> define the sizes of mdct atoms
             window (lambda fun) -> define the function used to window atoms
@@ -16,14 +16,14 @@ class  Mdct:
 
     def mdctOp(self,s):
         """ mdctOp
-            s (array) -> the signal vector to be decomposed
-            Output (array) -> the solution array
+            s (np.array) -> the signal vector to be decomposed
+            Output (np.array) -> the solution array
         """
         N = s.size
         L = self.sizes.size
-        x = zeros(L*N)
+        x = np.zeros(L*N)
         for i in range(L):
-             x[i*N:(i+1)*N] = self.mdct(s, self.sizes[i])/sqrt(L)
+             x[i*N:(i+1)*N] = self.mdct(s, self.sizes[i])/np.sqrt(L)
         return x
     
 
@@ -31,7 +31,7 @@ class  Mdct:
 
     def mdct(self,s,L):
         """ mdct
-            s (array) -> the signal vector to be decomposed
+            s (np.array) -> the signal vector to be decomposed
             L (int) -> the size of the atoms
             Output -> the solution array for this size
         """
@@ -46,60 +46,60 @@ class  Mdct:
         P = int(N/K)
 
         # Pad egdes with zeros
-        x = hstack( (zeros(K/2), s, zeros(K/2)) )
+        x = np.hstack( (np.zeros(K/2), s, np.zeros(K/2)) )
 
         # Framing
-        fidx = K *arange(P)
-        fidx = tile(fidx,(L,1)).transpose() # tile array to dimension P*L
-        sidx = arange(L)
-        sidx = tile(sidx,(P,1))
+        fidx = K *np.arange(P)
+        fidx = np.tile(fidx,(L,1)).transpose() # tile array to dimension P*L
+        sidx = np.arange(L)
+        sidx = np.tile(sidx,(P,1))
         x = x[fidx+sidx]
 
         # Windowing
-        win = self.window(arange(L))
-        winL = copy(win)
+        win = self.window(np.arange(L))
+        winL = np.copy(win)
         winL[0:L/4] = 0
         winL[L/4:L/2] = 1
-        winR = copy(win)
+        winR = np.copy(win)
         winR[L/2:3*L/4] = 1
         winR[3*L/4:] = 0
         x[0,:] *= winL
-        x[1:-1,:] *= tile(win,(P-2,1))
+        x[1:-1,:] *= np.tile(win,(P-2,1))
         x[-1,:] *= winR
 
         # Pre-twidle
-        x = complex_(x)
-        x *= tile(exp(-1j*pi*arange(L)/L), (P,1) )
+        x = np.complex_(x)
+        x *= np.tile(np.exp(-1j*np.pi*np.arange(L)/L), (P,1) )
         
         # FFT
-        y = fft.fft(x)
+        y = np.fft.fft(x)
 
         # Post-twidle
         y = y[:,:L/2]
-        y *= tile(exp(-1j*pi*(L/2+1)*arange(1/2,(L+1)/2)/L),(P,1))
+        y *= np.tile(np.exp(-1j*np.pi*(L/2+1)*np.arange(1/2,(L+1)/2)/L),(P,1))
 
         # Real part & scaling
-        return sqrt(2/K)*real(y.ravel())
+        return np.sqrt(2/K)*y.ravel().real
         
     
     def imdctOp(self,y):
         """imdctOP: inverse mdct operator
-            y(array) -> vector to be recomposed
+            y(np.array) -> vector to be recomposed
             Ouput -> recomposed signal
         """
         S=self.sizes.size
         N=y.size/S
-        s=zeros(N)
+        s=np.zeros(N)
 
         for i in range(S):
             s += self.imdct(y[i*N:(i+1)*N], self.sizes[i])
-        s/=sqrt(S)
+        s/=np.sqrt(S)
         return s
 
 
     def imdct(self,y,L):
         """imdct: inverse mdct
-            y(array) -> mdct signal
+            y(np.array) -> mdct signal
             L -> frame size
         """
         # signal size
@@ -111,37 +111,37 @@ class  Mdct:
 
         # Reshape y
         tmp = y.reshape(P,K)
-        y = zeros( (P,L) )
+        y = np.zeros( (P,L) )
         y[:,:K] = tmp
 
         # Pre-twidle
-        y = complex_(y)
-        y *= tile(exp(1j*2*pi*arange(L)*(L/2+1)/2/L), (P,1))
+        y = np.complex_(y)
+        y *= np.tile(np.exp(1j*2*np.pi*np.arange(L)*(L/2+1)/2/L), (P,1))
 
         # IFFT
-        x = fft.ifft(y);
+        x = np.fft.ifft(y);
 
         # Post-twidle
-        x *= tile(exp((1/2)*1j*2*pi*(arange(L)+((L/2+1)/2))/L),(P,1));
+        x *= np.tile(np.exp((1/2)*1j*2*np.pi*(np.arange(L)+((L/2+1)/2))/L),(P,1));
 
         # Windowing
-        win = self.window(arange(L))
-        winL = copy(win)
+        win = self.window(np.arange(L))
+        winL = np.copy(win)
         winL[:L/4] = 0
         winL[L/4:L/2] = 1
-        winR = copy(win)
+        winR = np.copy(win)
         winR[L/2:3*L/4] = 1
         winR[3*L/4:] = 0
         x[0,:] *= winL
-        x[1:-1,:] *= tile(win,(P-2,1))
+        x[1:-1,:] *= np.tile(win,(P-2,1))
         x[-1,:] *= winR
 
         # Real part & scaling
-        x = sqrt(2/K)*L*real(x)
+        x = np.sqrt(2/K)*L*x.real
 
         # Overlap and add
-        b = repeat(arange(P),L)
-        a = tile(arange(L),P) + b*K
+        b = np.repeat(np.arange(P),L)
+        a = np.tile(np.arange(L),P) + b*K
         x = sparse.coo_matrix((x.ravel(),(b,a)),shape=(P,N+K)).sum(axis=0).A1
 
         # Cut edges
