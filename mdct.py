@@ -2,7 +2,7 @@ from numpy import *
 from scipy import sparse
 
 
-class  MdctDictionary: 
+class  Mdct: 
     """ Define the MDCT dictionary class used for Sparse decomposition """
     
 
