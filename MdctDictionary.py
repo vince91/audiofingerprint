@@ -1,4 +1,5 @@
 from numpy import *
+from scipy import sparse
 
 
 class  MdctDictionary: 
@@ -56,10 +57,10 @@ class  MdctDictionary:
 
         # Windowing
         win = self.window(arange(L))
-        winL = win
+        winL = copy(win)
         winL[0:L/4] = 0
         winL[L/4:L/2] = 1
-        winR = win
+        winR = copy(win)
         winR[L/2:3*L/4] = 1
         winR[3*L/4:] = 0
         x[0,:] *= winL
@@ -75,11 +76,76 @@ class  MdctDictionary:
 
         # Post-twidle
         y = y[:,:L/2]
-        y *= tile(exp(-1j*pi*(L/2+1)*arange(1/2,(L+1)/2)),(P,1))
+        y *= tile(exp(-1j*pi*(L/2+1)*arange(1/2,(L+1)/2)/L),(P,1))
 
         # Real part & scaling
         return sqrt(2/K)*real(y.ravel())
         
+    
+    def imdctOp(self,y):
+        """imdctOP: inverse mdct operator
+            y(array) -> vector to be recomposed
+            Ouput -> recomposed signal
+        """
+        S=self.sizes.size
+        N=y.size/S
+        s=zeros(N)
+
+        for i in range(S):
+            s += self.imdct(y[i*N:(i+1)*N], self.sizes[i])
+        s/=sqrt(S)
+        return s
+
+
+    def imdct(self,y,L):
+        """imdct: inverse mdct
+            y(array) -> mdct signal
+            L -> frame size
+        """
+        # signal size
+        N = y.size
+        # Number of frequency channels
+        K = L/2
+        # Number of frames
+        P = N/K
+
+        # Reshape y
+        tmp = y.reshape(P,K)
+        y = zeros( (P,L) )
+        y[:,:K] = tmp
+
+        # Pre-twidle
+        y = complex_(y)
+        y *= tile(exp(1j*2*pi*arange(L)*(L/2+1)/2/L), (P,1))
+
+        # IFFT
+        x = fft.ifft(y);
+
+        # Post-twidle
+        x *= tile(exp((1/2)*1j*2*pi*(arange(L)+((L/2+1)/2))/L),(P,1));
+
+        # Windowing
+        win = self.window(arange(L))
+        winL = copy(win)
+        winL[:L/4] = 0
+        winL[L/4:L/2] = 1
+        winR = copy(win)
+        winR[L/2:3*L/4] = 1
+        winR[3*L/4:] = 0
+        x[0,:] *= winL
+        x[1:-1,:] *= tile(win,(P-2,1))
+        x[-1,:] *= winR
+
+        # Real part & scaling
+        x = sqrt(2/K)*L*real(x)
+
+        # Overlap and add
+        b = repeat(arange(P),L)
+        a = tile(arange(L),P) + b*K
+        x = sparse.coo_matrix((x.ravel(),(b,a)),shape=(P,N+K)).sum(axis=0).A1
+
+        # Cut edges
+        return x[K/2:-K/2]
 
 
 
