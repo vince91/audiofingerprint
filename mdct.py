@@ -41,9 +41,9 @@ class  Mdct:
         # Size of the signal
         N = s.size
         # Number of frequency channels
-        K = int(L/2)
+        K = L/2
         # Number of frames
-        P = int(N/K)
+        P = N/K
 
         # Pad egdes with zeros
         x = np.hstack( (np.zeros(K/2), s, np.zeros(K/2)) )
@@ -79,7 +79,8 @@ class  Mdct:
         y *= np.tile(np.exp(-1j*np.pi*(L/2+1)*np.arange(1/2,(L+1)/2)/L),(P,1))
 
         # Real part & scaling
-        return np.sqrt(2/K)*y.ravel().real
+        print(np.amax(np.sqrt(2/K)))
+        return np.sqrt(2./K)*y.ravel().real
         
     
     def imdctOp(self,y):
@@ -116,13 +117,13 @@ class  Mdct:
 
         # Pre-twidle
         y = np.complex_(y)
-        y *= np.tile(np.exp(1j*2*np.pi*np.arange(L)*(L/2+1)/2/L), (P,1))
+        y *= np.tile(np.exp(1j*2.*np.pi*np.arange(L)*(L/2+1)/2./L), (P,1))
 
         # IFFT
         x = np.fft.ifft(y);
 
         # Post-twidle
-        x *= np.tile(np.exp((1/2)*1j*2*np.pi*(np.arange(L)+((L/2+1)/2))/L),(P,1));
+        x *= np.tile(np.exp((1./2.)*1j*2*np.pi*(np.arange(L)+((L/2+1)/2.))/L),(P,1));
 
         # Windowing
         win = self.window(np.arange(L))
@@ -137,7 +138,7 @@ class  Mdct:
         x[-1,:] *= winR
 
         # Real part & scaling
-        x = np.sqrt(2/K)*L*x.real
+        x = np.sqrt(2./K)*L*x.real
 
         # Overlap and add
         b = np.repeat(np.arange(P),L)
