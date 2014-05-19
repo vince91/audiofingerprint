@@ -76,10 +76,9 @@ class  Mdct:
 
         # Post-twidle
         y = y[:,:L/2]
-        y *= np.tile(np.exp(-1j*np.pi*(L/2+1)*np.arange(1/2,(L+1)/2)/L),(P,1))
+        y *= np.tile(np.exp(-1j*np.pi*(L/2+1)*np.arange(1/2,(L+1)/2.)/L),(P,1))
 
         # Real part & scaling
-        print(np.amax(np.sqrt(2/K)))
         return np.sqrt(2./K)*y.ravel().real
         
     
