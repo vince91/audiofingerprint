@@ -41,9 +41,9 @@ class  Mdct:
         # Size of the signal
         N = s.size
         # Number of frequency channels
-        K = L/2
+        K = int(L/2)
         # Number of frames
-        P = N/K
+        P = int(N/K)
 
         # Pad egdes with zeros
         x = np.hstack( (np.zeros(K/2), s, np.zeros(K/2)) )
@@ -76,7 +76,7 @@ class  Mdct:
 
         # Post-twidle
         y = y[:,:L/2]
-        y *= np.tile(np.exp(-1j*np.pi*(L/2+1)*np.arange(1/2,(L+1)/2.)/L),(P,1))
+        y *= np.tile(np.exp(-1j*np.pi*(L/2+1)*np.arange(1/2.,(L+1)/2.)/L),(P,1))
 
         # Real part & scaling
         return np.sqrt(2./K)*y.ravel().real
