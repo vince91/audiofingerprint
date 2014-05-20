@@ -23,7 +23,7 @@ class  Mdct:
         L = self.sizes.size
         x = np.zeros(L*N)
         for i in range(L):
-             x[i*N:(i+1)*N] = self.mdct(s, self.sizes[i])/np.sqrt(L)
+             x[i*N:(i+1)*N-1] = self.mdct(s, self.sizes[i])/np.sqrt(L)
         return x
     
 
@@ -35,8 +35,6 @@ class  Mdct:
             L (int) -> the size of the atoms
             Output -> the solution array for this size
         """
-        # TODO : check if N is a multiple of K, or else return with error
-        #       define other error cases (P < 2,...)
         
         # Size of the signal
         N = s.size
@@ -44,6 +42,13 @@ class  Mdct:
         K = int(L/2)
         # Number of frames
         P = int(N/K)
+
+        # Test length
+        if N % K != 0:
+            raise Exception("Input length must be a multiple of the half of the window size")
+
+        if P < 2:
+            raise Exception("Signal too short")
 
         # Pad egdes with zeros
         x = np.hstack( (np.zeros(K/2), s, np.zeros(K/2)) )
