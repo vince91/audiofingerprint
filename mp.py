@@ -22,7 +22,7 @@ class MatchingPursuit:
             s -> the signal to be decomposed
         """
         # Residual
-        res = s;
+        res = np.copy(s);
         # Size of the sparse decompositon
         nd = s.size*self.dictionary.sizes.size
         # Decomposed signal
