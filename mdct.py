@@ -23,7 +23,7 @@ class  Mdct:
         L = self.sizes.size
         x = np.zeros(L*N)
         for i in range(L):
-             x[i*N:(i+1)*N-1] = self.mdct(s, self.sizes[i])/np.sqrt(L)
+             x[i*N:(i+1)*N] = self.mdct(s, self.sizes[i])/np.sqrt(L)
         return x
     
 
