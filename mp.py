@@ -52,6 +52,6 @@ class MatchingPursuit:
             signal_index = i%signal_size
             frequency_index = signal_index%atom_size
             time_index = signal_index//atom_size
-            key_list.append((atom_size_index, frequency_index, time_index))
+            key_list.append((atom_size, frequency_index, time_index))
 
         return key_list
