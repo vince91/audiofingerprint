@@ -1,3 +1,6 @@
 __pycache__/
 *.swp
 *.wav
+*.pyc
+*.mp3
+test*.py
