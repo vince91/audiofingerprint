@@ -39,8 +39,6 @@ class Database:
 		"""
 		"""
 
-		
-
 
 	def __del__(self):
 		self.connection.close()
