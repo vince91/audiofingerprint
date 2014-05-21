@@ -4,7 +4,8 @@ import sys
 import numpy
 from tempfile import NamedTemporaryFile
 import subprocess
-import scipy.io.wavfile as wv
+import wave as wv
+from StringIO import StringIO
 import os
 
 class Sound:
@@ -49,23 +50,19 @@ class Sound:
 def read(filename):
 
 	file = open(filename,'rb')
-	input_file = NamedTemporaryFile(mode='wb',delete=False)
+	input_file = NamedTemporaryFile(mode='wb')
 	input_file.write(file.read())
 	input_file.flush()
-	output_file = NamedTemporaryFile(mode="wb",delete=False)
+	output_file = NamedTemporaryFile(mode="rb")
 	args = ["ffmpeg" , "-y" ,  "-i" , input_file.name , "-f" , "wav", output_file.name]
 	# process ffmpeg
 	subprocess.call(args,stderr=open(os.devnull))
+	
+	wavdata = wv.open(StringIO(output_file.read()),'rb')
 	input_file.close()
 	output_file.close()
-	
-	# read convertes wav
-	(Fe,s) = wv.read(output_file.name)
-	
-	os.unlink(output_file.name)
-	os.unlink(input_file.name)
 
-	return (Fe,s)
+	return wavdata
 
 
 
