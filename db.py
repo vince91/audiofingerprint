@@ -19,7 +19,7 @@ class Database:
 
 		self.connection.commit()
 
-	def addSong(self, title):
+	def addTrack(self, title):
 		""" Add a song to database
 			return the id of the song
 		"""
@@ -38,6 +38,8 @@ class Database:
 	def selectFingerprints(self, hash):
 		"""
 		"""
+
+		
 
 
 	def __del__(self):
