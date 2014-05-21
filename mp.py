@@ -1,5 +1,6 @@
 import numpy as np
 from scipy import sparse
+import cPickle as pickle
 
 
 
@@ -17,6 +18,8 @@ class MatchingPursuit:
 
 
 
+
+
     def sparse(self,s):
         """ sparse:
             s -> the signal to be decomposed
@@ -26,16 +29,27 @@ class MatchingPursuit:
         # Size of the sparse decompositon
         nd = s.size*self.dictionary.sizes.size
         # Decomposed signal
-        y = sparse.lil_matrix((1,nd))
+        y = np.zeros(nd)
+        # Mask
+        mask = np.zeros(nd)
+        i=0
 
         # Loop until we got m atoms
-        while y.getnnz() < self.m:
+        while y[(y!=0)].size <=  self.m:
             tmp = self.dictionary.mdctOp(res)
             #Select new element
-            new = np.argmax(abs(tmp))
+            print(i)
+            i+=1
+            new = np.argmax(abs(tmp)*(1-mask))
+            #udpate Gram
+            if y[new] == 0:
+                tmp2 = np.zeros(nd)
+                tmp2[new] = 1;
+                tmp2 = self.dictionary.imdctOp(tmp2)
+                mask = np.maximum(mask,self.dictionary.mdctOp(tmp2))
             # update coefficient
-            y[0,new] += tmp[new]
+            y[new] += tmp[new]
             tmp[np.arange(nd)!=new] = 0
             res -=  self.dictionary.imdctOp(tmp)
         
-        return y.todense().A1
+        return y
