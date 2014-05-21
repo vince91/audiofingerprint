@@ -35,7 +35,7 @@ class MatchingPursuit:
         i=0
 
         # Loop until we got m atoms
-        while y[(y!=0)].size <=  self.m:
+        while np.count_nonzero(y) <=  self.m:
             tmp = self.dictionary.mdctOp(res)
             #Select new element
             print(i)
