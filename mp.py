@@ -39,3 +39,19 @@ class MatchingPursuit:
             res -=  self.dictionary.imdctOp(tmp)
         
         return y.todense().A1
+
+    def extractKey(y):
+        indices = np.nonzero(y)[0]
+        signal_size = y.size/d.sizes.size
+
+        key_list = []
+
+        for i in indices:
+            atom_size_index = i//signal_size
+            atom_size = self.dictionary.sizes[atom_size_index]
+            signal_index = i%signal_size
+            frequency_index = signal_index%atom_size
+            time_index = signal_index//atom_size
+            key_list.append((atom_size_index, frequency_index, time_index))
+
+        return key_list

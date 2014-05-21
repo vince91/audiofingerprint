@@ -54,7 +54,7 @@ def read(filename):
 	input_file.write(file.read())
 	input_file.flush()
 	output_file = NamedTemporaryFile(mode="rb")
-	args = ["ffmpeg" , "-y" ,  "-i" , input_file.name , "-f" , "wav", output_file.name]
+	args = ["ffmpeg" , "-y" ,  "-i" , input_file.name , "-ac", "1", "-f" , "wav", output_file.name]
 	# process ffmpeg
 	subprocess.call(args,stderr=open(os.devnull))
 	
