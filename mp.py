@@ -40,9 +40,9 @@ class MatchingPursuit:
         
         return y.todense().A1
 
-    def extractKey(y):
+    def extractKey(self, y):
         indices = np.nonzero(y)[0]
-        signal_size = y.size/d.sizes.size
+        signal_size = y.size/self.dictionary.sizes.size
 
         key_list = []
 
