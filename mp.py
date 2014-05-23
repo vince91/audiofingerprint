@@ -51,7 +51,7 @@ class MatchingPursuit:
             atom_size = self.dictionary.sizes[atom_size_index]
             signal_index = i%signal_size
             frequency_index = signal_index%atom_size
-            time_index = signal_index//atom_size
+            time_index = 2*signal_index//atom_size
             key_list.append((atom_size, frequency_index, time_index))
 
         return key_list

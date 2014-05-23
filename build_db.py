@@ -1,8 +1,10 @@
 import os
+import sound
+import hashlib
 from db import Database
 from mp import MatchingPursuit
 from mdct import Mdct
-import sound
+import numpy as np
 
 current_dir = os.path.dirname(os.path.abspath(__file__))
 music_dir = current_dir + "/music"
@@ -24,17 +26,16 @@ database.create()
 # Processing each track
 
 atoms_per_frame = 10
+frame_duration = 0.25
+
 mdct = Mdct()
 mp = MatchingPursuit(mdct, atoms_per_frame)
-Fe = 44100
-frame_duration = 2
 biggest_atom_size = mdct.sizes[-1]
-frame_size = int(frame_duration*Fe/biggest_atom_size)*biggest_atom_size
 
 for track in music_list:
 	track_title = track[:-4]
 	track_id = database.addTrack(track_title)
-	print("Processing %s, id: %d" % (track_title, track_id))
+	print("=> Processing %s, id: %d" % (track_title, track_id))
 
 	wavdata = sound.read(music_dir + "/" + track)
 	Fe = wavdata.getframerate()
@@ -42,7 +43,30 @@ for track in music_list:
 	frame_number = int(wavdata.getnframes()/frame_size)
 
 	print("%d frames to process for this track" % frame_number)
-	#for i in range(frame_number):
+	
+	progress = 0
+
+	for i in range(frame_number):
+		s = wavdata.readframes(frame_size)
+		s = np.frombuffer(s, dtype='<i2') 
+		y = mp.sparse(s)
+		keys = mp.extractKey(y)
+
+		for key in keys:
+			string = str(key[0]) + '-' + str(key[1])
+			key_hash = hashlib.sha1(string).digest()
+			database.addFingerprint(key_hash, track_id, i, int(key[2]))
+
+		if float(i)/frame_number*100 > progress + 10:
+			progress = int(float(i)/frame_number*100)
+			print("%d%%," % (progress,)),
+
+	print("100%")
+
+
+
+
+
 
 
 
