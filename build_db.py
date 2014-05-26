@@ -26,7 +26,7 @@ database.create()
 # Processing each track
 
 atoms_per_frame = 10
-frame_duration = 0.25
+frame_duration = 1
 
 mdct = Mdct()
 mp = MatchingPursuit(mdct, atoms_per_frame)
@@ -55,10 +55,11 @@ for track in music_list:
 		for key in keys:
 			string = str(key[0]) + '-' + str(key[1])
 			key_hash = hashlib.sha1(string).digest()
-			database.addFingerprint(key_hash, track_id, i, int(key[2]))
+			offset = int(i * frame_size + key[2])
+			database.addFingerprint(key_hash, track_id, offset)
 
-		if float(i)/frame_number*100 > progress + 10:
-			progress = int(float(i)/frame_number*100)
+		if i*100/frame_number >= progress + 10:
+			progress = i * 100/frame_number
 			print("%d%%," % (progress,)),
 
 	print("100%")

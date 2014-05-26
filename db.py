@@ -12,7 +12,7 @@ class Database:
 		"""
 		"""
 		self.cursor.execute('''CREATE TABLE fingerprints 
-			(hash BINARY(160), track_id INTEGER, frame INTEGER, time INTEGER)''')
+			(hash BINARY(160), track_id INTEGER, offset INTEGER)''')
 		self.cursor.execute('''CREATE INDEX id ON fingerprints (hash)''')
 
 		self.cursor.execute('''CREATE TABLE tracks 
@@ -29,15 +29,25 @@ class Database:
 
 		return self.cursor.lastrowid
 
-	def addFingerprint(self, hash, id, frame, time):
+	def addFingerprint(self, hash, id, offset):
 		""" Add a finderprint to database
 		"""
-		self.cursor.execute("INSERT INTO fingerprints VALUES (?, ?, ?, ?)", (sqlite3.Binary(hash), id, frame, time))
+		self.cursor.execute("INSERT INTO fingerprints VALUES (?, ?, ?)", (sqlite3.Binary(hash), id, offset))
 		self.connection.commit()
 
 	def selectFingerprints(self, hash):
 		"""
 		"""
+		self.cursor.execute('SELECT track_id, offset FROM fingerprints INDEXED BY id WHERE hash=?', (sqlite3.Binary(hash),))
+
+		return self.cursor.fetchall()
+
+	def getTrackNumber(self):
+		"""
+		"""
+		self.cursor.execute('SELECT COUNT(*) FROM tracks')
+		return self.cursor.fetchone()
+
 
 
 	def __del__(self):
