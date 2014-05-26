@@ -17,28 +17,43 @@ class MatchingPursuit:
 
 
 
+
+
     def sparse(self,s):
         """ sparse:
             s -> the signal to be decomposed
         """
         # Residual
-        res = np.copy(s);
+        res = np.copy(s)
+        N = np.size(s)
         # Size of the sparse decompositon
         nd = s.size*self.dictionary.sizes.size
         # Decomposed signal
-        y = sparse.lil_matrix((1,nd))
-
-        # Loop until we got m atoms
-        while y.getnnz() < self.m:
-            tmp = self.dictionary.mdctOp(res)
-            #Select new element
-            new = np.argmax(abs(tmp))
-            # update coefficient
-            y[0,new] += tmp[new]
-            tmp[np.arange(nd)!=new] = 0
-            res -=  self.dictionary.imdctOp(tmp)
+        y = np.zeros(nd)
+        # Mask
+        mask = np.zeros(nd)
+        i=0
         
-        return y.todense().A1
+        new = None
+        tmp = None
+        # Loop until we got m atoms
+        while np.count_nonzero(y) <=  self.m:
+            print('\n',i, " ", new)
+            tmp = self.dictionary.mdctOp(res,update=new,old=tmp)
+            #Select new element
+            i+=1
+            new = np.argmax(abs(tmp)*(1-mask))
+            #udpate mask
+            atom = self.dictionary.atom(N,new)
+            if y[new] == 0:
+                maskupdate = np.zeros(nd)
+                self.dictionary.mdctOp(atom,update=new,old=maskupdate)
+                mask = np.maximum(mask,maskupdate)
+            # update coefficient
+            y[new] += tmp[new]
+            res -=  tmp[new] * atom
+        
+        return y
 
     def extractKey(self, y):
         indices = np.nonzero(y)[0]
