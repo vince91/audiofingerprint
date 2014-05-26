@@ -185,6 +185,38 @@ class  Mdct:
         return x[K/2:-K/2]
 
 
+    def atom(self,N,id):
+        """ return an array contening a single atom defined by 
+            the size N of the signal and its id
+        """
+
+        # size of the atom
+        size_id = id//N
+        L = self.sizes[size_id];
+        K = L//2
+        P = N/K
+        # frame number
+        frame = (id%N)//K
+        # frequency
+        f = (id%N)%K
+
+        # window
+        win = self.window(np.arange(L))
+        if frame == 0:
+            win[:K/2] = 0
+            win[K/2:K] = 1
+        elif frame == P-1:
+            win[K:3*K/4] = 1
+            win[3*K/4:] = 0
+        # the signal array containing the atom
+        x = np.zeros(N+K)
+        x[frame*K:frame*K+L] =  np.sqrt(2/K) *  np.cos(2*np.pi/L * (f+1/2) * (np.arange(L) + (K + 1)/2)) * win
+
+        return x[K/2:-K/2]
+
+
+
+
 
 
             

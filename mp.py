@@ -24,7 +24,8 @@ class MatchingPursuit:
             s -> the signal to be decomposed
         """
         # Residual
-        res = np.copy(s);
+        res = np.copy(s)
+        N = np.size(s)
         # Size of the sparse decompositon
         nd = s.size*self.dictionary.sizes.size
         # Decomposed signal
@@ -43,14 +44,11 @@ class MatchingPursuit:
             i+=1
             new = np.argmax(abs(tmp)*(1-mask))
             #udpate mask
+            atom = self.dictionary.atom(N,new)
             if y[new] == 0:
-                tmp2 = np.zeros(nd)
-                tmp2[new] = 1;
-                tmp2 = self.dictionary.imdctOp(tmp2)
-                mask = np.maximum(mask,self.dictionary.mdctOp(tmp2))
+                mask = np.maximum(mask,self.dictionary.mdctOp(atom))
             # update coefficient
             y[new] += tmp[new]
-            tmp[np.arange(nd)!=new] = 0
-            res -=  self.dictionary.imdctOp(tmp)
+            res -=  tmp[new] * atom
         
         return y
