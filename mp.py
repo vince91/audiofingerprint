@@ -46,7 +46,9 @@ class MatchingPursuit:
             #udpate mask
             atom = self.dictionary.atom(N,new)
             if y[new] == 0:
-                mask = np.maximum(mask,self.dictionary.mdctOp(atom))
+                maskupdate = np.zeros(nd)
+                self.dictionary.mdctOp(atom,update=new,old=maskupdate)
+                mask = np.maximum(mask,maskupdate)
             # update coefficient
             y[new] += tmp[new]
             res -=  tmp[new] * atom
