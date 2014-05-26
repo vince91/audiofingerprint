@@ -1,6 +1,5 @@
 import numpy as np
 from scipy import sparse
-import cPickle as pickle
 
 
 
@@ -33,15 +32,17 @@ class MatchingPursuit:
         # Mask
         mask = np.zeros(nd)
         i=0
-
+        
+        new = None
+        tmp = None
         # Loop until we got m atoms
         while np.count_nonzero(y) <=  self.m:
-            tmp = self.dictionary.mdctOp(res)
+            print('\n',i, " ", new)
+            tmp = self.dictionary.mdctOp(res,update=new,old=tmp)
             #Select new element
-            print(i)
             i+=1
             new = np.argmax(abs(tmp)*(1-mask))
-            #udpate Gram
+            #udpate mask
             if y[new] == 0:
                 tmp2 = np.zeros(nd)
                 tmp2[new] = 1;

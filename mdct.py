@@ -11,37 +11,66 @@ class  Mdct:
             size (array) -> define the sizes of mdct atoms
             window (lambda fun) -> define the function used to window atoms
         """        
-        self.sizes = sizes
+        self.sizes = np.array(sizes)
         self.window = window
 
-    def mdctOp(self,s):
+    def mdctOp(self,s,update=None,old=None):
         """ mdctOp
             s (np.array) -> the signal vector to be decomposed
             Output (np.array) -> the solution array
         """
         N = s.size
         L = self.sizes.size
-        x = np.zeros(L*N)
-        for i in range(L):
-             x[i*N:(i+1)*N] = self.mdct(s, self.sizes[i])/np.sqrt(L)
-        return x
+        if old==None:
+            x = np.zeros(L*N)
+        else:
+            x = old
+
+        # if we update the old 
+        if update:
+            # index of the size
+            uid = update//N
+            # size of the updated atom
+            usize = self.sizes[uid]
+            # frame index of the updated atom
+            uframe = (update%N)//(usize//2)
+            # time of the atom (in samples)
+            utime = uframe*(usize//2)
+            for i in range(L):
+                size = self.sizes[i]
+                first = utime // (size//2)
+                first = first - 1 if first > 0 else 0
+                last = np.minimum( ((utime+usize-1) // (size//2) + 1) ,N//(size//2))
+                urange = (first,last);
+                x[i*N+first*size//2:i*N+last*size//2] = self.mdct(s,i,urange)
+            return x
+
+        # if no update
+        else:
+            for i in range(L):
+                 x[i*N:(i+1)*N] = self.mdct(s, i)
+            return x
     
 
 
 
-    def mdct(self,s,L):
+    def mdct(self,s,i,urange=None):
         """ mdct
             s (np.array) -> the signal vector to be decomposed
-            L (int) -> the size of the atoms
+            i (int) -> index the size of the atoms
             Output -> the solution array for this size
         """
-        
+        L = self.sizes[i]
         # Size of the signal
         N = s.size
         # Number of frequency channels
         K = int(L/2)
         # Number of frames
         P = int(N/K)
+        
+        # the range of frames to be proceeded
+        (framemin,framemax) = urange if urange else (0,P)
+        framerange = framemax - framemin
 
         # Test length
         if N % K != 0:
@@ -54,10 +83,10 @@ class  Mdct:
         x = np.hstack( (np.zeros(K/2), s, np.zeros(K/2)) )
 
         # Framing
-        fidx = K *np.arange(P)
+        fidx = K *np.arange(framemin,framemax)
         fidx = np.tile(fidx,(L,1)).transpose() # tile array to dimension P*L
         sidx = np.arange(L)
-        sidx = np.tile(sidx,(P,1))
+        sidx = np.tile(sidx,(framerange,1))
         x = x[fidx+sidx]
 
         # Windowing
@@ -69,19 +98,20 @@ class  Mdct:
         winR[L/2:3*L/4] = 1
         winR[3*L/4:] = 0
         x[0,:] *= winL
-        x[1:-1,:] *= np.tile(win,(P-2,1))
+        if(framerange > 2):
+            x[1:-1,:] *= np.tile(win,(framerange-2,1))
         x[-1,:] *= winR
 
         # Pre-twidle
         x = np.complex_(x)
-        x *= np.tile(np.exp(-1j*np.pi*np.arange(L)/L), (P,1) )
+        x *= np.tile(np.exp(-1j*np.pi*np.arange(L)/L), (framerange,1) )
         
         # FFT
         y = np.fft.fft(x)
 
         # Post-twidle
         y = y[:,:L/2]
-        y *= np.tile(np.exp(-1j*np.pi*(L/2+1)*np.arange(1/2.,(L+1)/2.)/L),(P,1))
+        y *= np.tile(np.exp(-1j*np.pi*(L/2+1)*np.arange(1/2.,(L+1)/2.)/L),(framerange,1))
 
         # Real part & scaling
         return np.sqrt(2./K)*y.ravel().real
@@ -97,16 +127,18 @@ class  Mdct:
         s=np.zeros(N)
 
         for i in range(S):
-            s += self.imdct(y[i*N:(i+1)*N], self.sizes[i])
-        s/=np.sqrt(S)
+            s += self.imdct(y[i*N:(i+1)*N], i)
+        s/=S
         return s
 
 
-    def imdct(self,y,L):
+    def imdct(self,y,i):
         """imdct: inverse mdct
             y(np.array) -> mdct signal
-            L -> frame size
+            i -> index frame size
         """
+        # frame size
+        L = self.sizes[i]
         # signal size
         N = y.size
         # Number of frequency channels
