@@ -38,7 +38,7 @@ class MatchingPursuit:
         tmp = None
         # Loop until we got m atoms
         while np.count_nonzero(y) <=  self.m:
-            print('\n',i, " ", new)
+            print(i, " ", new)
             tmp = self.dictionary.mdctOp(res,update=new,old=tmp)
             #Select new element
             i+=1

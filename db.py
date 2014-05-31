@@ -29,16 +29,16 @@ class Database:
 
 		return self.cursor.lastrowid
 
-	def addFingerprint(self, hash, id, offset):
+	def addFingerprint(self, query):
 		""" Add a finderprint to database
 		"""
-		self.cursor.execute("INSERT INTO fingerprints VALUES (?, ?, ?)", (sqlite3.Binary(hash), id, offset))
+		self.cursor.executemany("INSERT INTO fingerprints VALUES (?, ?, ?)", (query))
 		self.connection.commit()
 
 	def selectFingerprints(self, hash):
 		"""
 		"""
-		self.cursor.execute('SELECT track_id, offset FROM fingerprints INDEXED BY id WHERE hash=?', (sqlite3.Binary(hash),))
+		self.cursor.execute('SELECT track_id, offset FROM fingerprints INDEXED BY id WHERE hash=?', (hash,))
 
 		return self.cursor.fetchall()
 

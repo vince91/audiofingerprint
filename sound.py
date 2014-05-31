@@ -5,7 +5,6 @@ import numpy
 from tempfile import NamedTemporaryFile
 import subprocess
 import wave as wv
-from StringIO import StringIO
 import os
 
 class Sound:
@@ -58,7 +57,7 @@ def read(filename):
 	# process ffmpeg
 	subprocess.call(args,stderr=open(os.devnull))
 	
-	wavdata = wv.open(StringIO(output_file.read()),'rb')
+	wavdata = wv.open(output_file.name,'rb')
 	input_file.close()
 	output_file.close()
 
