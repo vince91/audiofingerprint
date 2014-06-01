@@ -47,7 +47,12 @@ class Database:
 		"""
 		self.cursor.execute('SELECT COUNT(*) FROM tracks')
 		return self.cursor.fetchone()
-
+        
+	def getTrackInfo(self,songid):
+		"""	Get track info
+		"""
+		self.cursor.execute('SELECT title FROM tracks WHERE track_id=?', (songid,))
+		return self.cursor.fetchone()
 
 
 	def __del__(self):

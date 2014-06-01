@@ -1,5 +1,6 @@
 import numpy as np
 from hashlib import sha1
+from db import Database
 
 
 
@@ -87,3 +88,35 @@ class MatchingPursuit:
 
         return entries
                 
+
+
+    def match(self,s):
+
+        y = self.sparse(s)
+        # keys for the signal
+        keys = self.extractKeys(y)
+        db = Database()
+        
+        offsets = {}
+        # Quantiztion factor for the offsets
+        qt = max(self.dictionary.sizes)
+        for hash_key,offset in keys:
+            result = db.selectFingerprints(hash_key)
+            for r in result:
+                if not r[0] in offsets:
+                    offsets[r[0]] = []
+                offsets[r[0]].append((r[1] - offset)//qt * qt)
+
+        songid = None
+        max_offset = 0
+        # proceed the histogram
+        for song,o in offsets.items():
+            # extract the most common offset
+            tmp_max = o.count(max(set(o), key=o.count))
+            if tmp_max > max_offset:
+                max_offset = tmp_max
+                songid = song
+
+        return songid,offsets
+
+
