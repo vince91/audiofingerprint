@@ -1,5 +1,5 @@
 import numpy as np
-from scipy import sparse
+from hashlib import sha1
 
 
 
@@ -55,7 +55,7 @@ class MatchingPursuit:
         
         return y
 
-    def extractKey(self, y):
+    def extractAtoms(self, y):
         indices = np.nonzero(y)[0]
         signal_size = y.size/self.dictionary.sizes.size
 
@@ -70,3 +70,20 @@ class MatchingPursuit:
             key_list.append((atom_size, frequency_index, offset))
 
         return key_list
+
+    def extractKeys(self, y):
+        
+        entries = []
+        atoms = self.extractAtoms(y)
+        for i in range(len(atoms) - 1):
+            for j in range(i+1,len(atoms)):
+                offseti = int(atoms[i][2])
+                offsetj = int(atoms[j][2])
+                stringi = (str(atoms[i][0])) + '-' + str(atoms[i][1])
+                stringj = (str(atoms[j][0])) + '-' + str(atoms[j][1])
+                string = (stringi+','+stringj+','+str(offseti - offsetj)).encode('utf-8')
+                key_hash = sha1(string).digest()
+                entries.append((key_hash, offseti)) 
+
+        return entries
+                

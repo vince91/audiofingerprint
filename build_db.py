@@ -49,18 +49,8 @@ for track in music_list:
         s = wavdata.readframes(frame_size)
         s = np.frombuffer(s, dtype='<i2') 
         y = mp.sparse(s)
-        keys = mp.extractKey(y)
-        query = []
-
-        for k in range(len(keys) - 1):
-            for j in range(k+1,len(keys)):
-                offsetk = int(i * frame_size + keys[k][2])
-                offsetj = int(i * frame_size + keys[j][2])
-                stringk = str(keys[k][0]) + '-' + str(keys[k][1])
-                stringj = str(keys[j][0]) + '-' + str(keys[j][1])
-                string = (stringk+','+stringj+','+str(offsetk -offsetj)).encode('utf-8')
-                key_hash = hashlib.sha1(string).digest()
-                query.append((key_hash, track_id, offsetk))
+        keys = mp.extractKeys(y)
+        query = [(hash_key,track_id, int(i*frame_size+offset)) for (hash_key,offset) in keys]
 
         database.addFingerprint(query)
 
