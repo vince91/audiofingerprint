@@ -12,8 +12,7 @@ music_list = []
 
 # Selecting all mp3 in music directory
 for file in os.listdir(music_dir):
-        if file.endswith(".mp3"):
-                music_list.append(file)
+    music_list.append(file)
 
 print("%d tracks in database" % len(music_list))
 
@@ -25,7 +24,7 @@ database.create()
 
 # Processing each track
 
-atoms_per_frame = 100
+atoms_per_frame = 60
 frame_duration = 3
 
 mdct = Mdct([2048,8192,16384])

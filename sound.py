@@ -8,60 +8,62 @@ import wave as wv
 import os
 
 class Sound:
-	
-	CHUNK = 1024
-	FORMAT = pyaudio.paInt16
-	CHANNELS = 1
-	RATE = 44100
+        
+        CHUNK = 1024
+        FORMAT = pyaudio.paInt16
+        CHANNELS = 1
+        RATE = 44100
 
-	def __init__(self, duration = 5):
-		self.duration = duration
+        def __init__(self, duration = 5):
+                self.duration = duration
 
-	def record(self):
-		"""
-		record a sound from the microphone
-		"""
-		print('Recording a %d seconds sound' % self.duration);
+        def record(self):
+                """
+                record a sound from the microphone
+                """
+                print('Recording a %d seconds sound' % self.duration);
 
-		self.samples = array('h')
+                self.samples = array('h')
 
-		p = pyaudio.PyAudio();
-		stream = p.open(format = self.FORMAT, channels = self.CHANNELS, rate = self.RATE, input = True, frames_per_buffer = self.CHUNK)
+                p = pyaudio.PyAudio();
+                stream = p.open(format = self.FORMAT, channels = self.CHANNELS, rate = self.RATE, input = True, frames_per_buffer = self.CHUNK)
 
-		for i in range(0, int(self.duration * self.RATE / self.CHUNK)):
-			data = array('h', stream.read(self.CHUNK))
-			if sys.byteorder == 'big':
-				data.byteswap()
-			self.samples.extend(data)
+                for i in range(0, int(self.duration * self.RATE / self.CHUNK)):
+                        data = array('h', stream.read(self.CHUNK))
+                        if sys.byteorder == 'big':
+                                data.byteswap()
+                        self.samples.extend(data)
 
-		stream.stop_stream()
-		stream.close()
-		p.terminate()
+                stream.stop_stream()
+                stream.close()
+                p.terminate()
 
 
-	def save(self):
+        def save(self):
 
-		numpy.savetxt("foo.csv", self.samples, delimiter=",")
+                numpy.savetxt("foo.csv", self.samples, delimiter=",")
 
 
 
 
 def read(filename):
 
-	file = open(filename,'rb')
-	input_file = NamedTemporaryFile(mode='wb')
-	input_file.write(file.read())
-	input_file.flush()
-	output_file = NamedTemporaryFile(mode="rb")
-	args = ["ffmpeg" , "-y" ,  "-i" , input_file.name , "-ac", "1", "-f" , "wav", output_file.name]
-	# process ffmpeg
-	subprocess.call(args,stderr=open(os.devnull))
-	
-	wavdata = wv.open(output_file.name,'rb')
-	input_file.close()
-	output_file.close()
+        file = open(filename,'rb')
+        input_file = NamedTemporaryFile(mode='wb')
+        input_file.write(file.read())
+        input_file.flush()
+        output_file = NamedTemporaryFile(mode="rb")
+        args = ["ffmpeg" , "-y" ,  "-i" , input_file.name , "-ac", "1", "-f" , "wav", output_file.name]
+        # process ffmpeg
+        subprocess.call(args,stderr=open(os.devnull))
+        
+        wavdata = wv.open(output_file.name,'rb')
+        input_file.close()
+        output_file.close()
 
-	return wavdata
+        file.close()
+
+        return wavdata
 
 
 
