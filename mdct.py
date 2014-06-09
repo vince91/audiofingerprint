@@ -206,8 +206,8 @@ class  Mdct:
             win[:K/2] = 0
             win[K/2:K] = 1
         elif frame == P-1:
-            win[K:3*K/4] = 1
-            win[3*K/4:] = 0
+            win[K:3*K/2] = 1
+            win[3*K/2:] = 0
         # the signal array containing the atom
         x = np.zeros(N+K)
         x[frame*K:frame*K+L] =  np.sqrt(2/K) *  np.cos(2*np.pi/L * (f+1/2) * (np.arange(L) + (K + 1)/2)) * win
