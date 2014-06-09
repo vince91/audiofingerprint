@@ -3,7 +3,7 @@ import sqlite3
 class Database:
 
 	def __init__(self):
-		self.connection = sqlite3.connect('database.db')
+		self.connection = sqlite3.connect('database.sqlite')
 		self.connection.text_factory = str
 		self.cursor = self.connection.cursor()
 
