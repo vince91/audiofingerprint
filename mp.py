@@ -39,7 +39,7 @@ class MatchingPursuit:
         tmp = None
         # Loop until we got m atoms
         while np.count_nonzero(y) <=  self.m:
-            print(i, " ", new)
+            print(i, "\t", new)
             tmp = self.dictionary.mdctOp(res,update=new,old=tmp)
             #Select new element
             i+=1
@@ -53,7 +53,7 @@ class MatchingPursuit:
             # update coefficient
             y[new] += tmp[new]
             res -=  tmp[new] * atom
-        
+       
         return y
 
     def extractAtoms(self, y):
@@ -80,11 +80,13 @@ class MatchingPursuit:
             for j in range(i+1,len(atoms)):
                 offseti = int(atoms[i][2])
                 offsetj = int(atoms[j][2])
-                stringi = (str(atoms[i][0])) + '-' + str(atoms[i][1])
-                stringj = (str(atoms[j][0])) + '-' + str(atoms[j][1])
-                string = (stringi+','+stringj+','+str(offseti - offsetj)).encode('utf-8')
-                key_hash = sha1(string).digest()
-                entries.append((key_hash, offseti)) 
+                deltat = int(offsetj - offseti)
+                if abs(deltat) < 4000:
+                    stringi = (str(atoms[i][0])) + '-' + str(atoms[i][1])
+                    stringj = (str(atoms[j][0])) + '-' + str(atoms[j][1])
+                    string = (stringi+','+stringj+','+str(deltat)).encode('utf-8')
+                    key_hash = sha1(string).digest()
+                    entries.append((key_hash, offseti)) 
 
         return entries
                 
