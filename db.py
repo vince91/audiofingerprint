@@ -48,6 +48,12 @@ class Database:
 		self.cursor.execute('SELECT COUNT(*) FROM tracks')
 		return self.cursor.fetchone()
 
+	def getTrackTitle(self, id):
+		"""
+		"""
+		self.cursor.execute('SELECT title FROM tracks WHERE track_id=?', (id,))
+		return self.cursor.fetchone()
+
 	def selectTrack(self, title):
 		"""
 		"""

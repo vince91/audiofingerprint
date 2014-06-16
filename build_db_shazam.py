@@ -34,6 +34,8 @@ for track in music_list:
 	wavdata = sound.read(music_dir + "/" + track)
 	keys = shazam.processTrack(wavdata)
 
+	print("=> %d keys" % len(keys))
+
 	query = []
 	for key in keys:
 		string = str(key[0]) + '-' + str(key[1]) + '-' + str(key[2])

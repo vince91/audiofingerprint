@@ -17,6 +17,10 @@ class Shazam:
 		frame_number = int(track_size / frame_size)
 		total_pairs = []
 
+		if frame_number is 0:
+			frame_number = 1
+			frame_size = track_size
+
 		for k in range(frame_number):
 			x = wavdata.readframes(frame_size)
 			x = np.frombuffer(x, dtype='<i2') 
@@ -69,7 +73,7 @@ class Shazam:
 
 		return np.array(peaks)
 
-	def pairPeaks(self, peaks, max_distance = 150):
+	def pairPeaks(self, peaks, max_distance = 80):
 
 		pairs = []
 
