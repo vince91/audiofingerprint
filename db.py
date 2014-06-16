@@ -2,8 +2,8 @@ import sqlite3
 
 class Database:
 
-	def __init__(self, method='shazam'):
-		self.connection = sqlite3.connect('database_' + method + '.db')
+	def __init__(self):
+		self.connection = sqlite3.connect('database.sqlite')
 		self.connection.text_factory = str
 		self.cursor = self.connection.cursor()
 
@@ -39,7 +39,6 @@ class Database:
 		"""
 		"""
 		self.cursor.execute('SELECT track_id, offset FROM fingerprints INDEXED BY id WHERE hash=?', (sqlite3.Binary(hash),))
-
 		return self.cursor.fetchall()
 
 	def getTrackNumber(self):
