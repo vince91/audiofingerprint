@@ -38,6 +38,7 @@ for track in music_list:
 		offset = int(key[3])
 		key_hash = hashlib.sha1(string).digest()
 		key_hash = sqlite3.Binary(key_hash)
+		key_hash = key_hash[0:5]
 		query.append((key_hash, track_id, offset))
 
 	database.addFingerprint(query, 'shazam')
