@@ -31,29 +31,58 @@ class MatchingPursuit:
         nd = s.size*self.dictionary.sizes.size
         # Decomposed signal
         y = np.zeros(nd)
-        # Mask
-        mask = np.zeros(nd)
-        i=0
+
+
+        for k in range(4):
+            # Mask
+            mask = np.int16(np.zeros(nd))
+           
+            
+            for i in range(self.dictionary.sizes.size):
+                K = int(self.dictionary.sizes[i]/2)
+                for j in range(int(N/K)):
+                    mask[i*N + (j+k/4)*K: i*N+(j+(k+1)/4)*K] = np.ones(K/4) 
+           
+           
+            i=0
+            new = None
+            tmp = None
+            # Loop until we got m atoms
+            for i in range(self.m//4):
+                #print(i, "\t", new)
+                tmp = self.dictionary.mdctOp(res,update=new,old=tmp)
+                #Select new element
+                i+=1
+                new = np.argmax(abs(tmp * mask))
+                #udpate mask
+                if y[new] == 0:
+                    # index of size
+                    nid = new//N
+                    # size of new
+                    nsize = self.dictionary.sizes[nid]
+                    # frame index of the new item
+                    nframe = (new%N)//(nsize//2)
+                    # time of the atom
+                    ntime = nframe*(nsize//2)
+                    # freq of the new atom
+                    nfreq = (new%N)%(nsize//2)
+
+                    for j in range(self.dictionary.sizes.size):
+                        size = self.dictionary.sizes[j]
+                        K=size//2
+                        first = ntime//K
+                        first = first - 1 if first > 0 else 0
+                        last = np.minimum( (ntime+nsize-1) // K + 1, N//K)
+                        freq = int(nfreq/nsize*size)
+                        deltafreq = int(0.03*size - 1/2)
+                        for frame in range(first,last):
+                            mask[j*N+frame*K+freq - deltafreq:j*N+frame*K +freq +deltafreq] = 0
+
+                # update coefficient
+                y[new] += tmp[new]
+                atom = self.dictionary.atom(N,new)
+                res -=  tmp[new] * atom
         
-        new = None
-        tmp = None
-        # Loop until we got m atoms
-        while np.count_nonzero(y) <=  self.m:
-            print(i, "\t", new)
-            tmp = self.dictionary.mdctOp(res,update=new,old=tmp)
-            #Select new element
-            i+=1
-            new = np.argmax(abs(tmp)*(1-mask))
-            #udpate mask
-            atom = self.dictionary.atom(N,new)
-            if y[new] == 0:
-                maskupdate = np.zeros(nd)
-                self.dictionary.mdctOp(atom,update=new,old=maskupdate)
-                mask = np.maximum(mask,maskupdate)
-            # update coefficient
-            y[new] += tmp[new]
-            res -=  tmp[new] * atom
-       
         return y
 
     def extractAtoms(self, y):
@@ -77,16 +106,17 @@ class MatchingPursuit:
         entries = []
         atoms = self.extractAtoms(y)
         for i in range(len(atoms) - 1):
+            k=0
+            asize,freq,offset = atoms[i]
             for j in range(i+1,len(atoms)):
-                offseti = int(atoms[i][2])
-                offsetj = int(atoms[j][2])
-                deltat = int(offsetj - offseti)
-                if abs(deltat) < 4000:
-                    stringi = (str(atoms[i][0])) + '-' + str(atoms[i][1])
-                    stringj = (str(atoms[j][0])) + '-' + str(atoms[j][1])
-                    string = (stringi+','+stringj+','+str(deltat)).encode('utf-8')
+                asizej,freqj,offsetj = atoms[j]
+                deltat = int(offsetj - offset)
+                if abs(deltat) <= 6.5*8192 and np.abs((freqj+1/2)/asizej - (freq+1/2)/asize) <= 0.18:
+                    stringi = (str(asize)) + '-' + str(freq)
+                    stringj = (str(asizej)) + '-' + str(freqj)
+                    string = (stringi+','+stringj+','+str(int(deltat))).encode('utf-8')
                     key_hash = sha1(string).digest()
-                    entries.append((key_hash, offseti)) 
+                    entries.append((key_hash, int(offset)))
 
         return entries
                 
@@ -101,7 +131,7 @@ class MatchingPursuit:
         
         offsets = {}
         # Quantiztion factor for the offsets
-        qt = max(self.dictionary.sizes)
+        qt = max(self.dictionary.sizes)/2
         for hash_key,offset in keys:
             result = db.selectFingerprints(hash_key)
             for r in result:

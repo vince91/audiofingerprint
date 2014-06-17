@@ -4,4 +4,4 @@ __pycache__/
 *.pyc
 *.mp3
 test*.py
-database.db
+database*
