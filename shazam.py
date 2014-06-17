@@ -8,6 +8,7 @@ class Shazam:
 		self.hop = window_size/4
 		self.window = 0.5 * (1 - np.cos(2*np.pi*np.arange(window_size)/(window_size-1)))
 		self.frame_duration = frame_duration
+		self.min_real = 0.0000000001
 
 	def processTrack(self, wavdata):
 
@@ -49,7 +50,7 @@ class Shazam:
 			tx = x[start:end] * self.window
 			TX = np.fft.fft(tx)
 			TX = TX[:self.window_size / 2 + 1]
-			spect[:, i] = 10 * np.log10(np.absolute(TX))
+			spect[:, i] = 10 * np.log10(np.absolute(TX) + self.min_real)
 
 		return spect
 
