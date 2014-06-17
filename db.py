@@ -7,14 +7,18 @@ class Database:
 		self.connection.text_factory = str
 		self.cursor = self.connection.cursor()
 
-
 	def create(self):
 		"""
 		"""
-		self.cursor.execute('''CREATE TABLE fingerprints 
+		self.cursor.execute('''CREATE TABLE fingerprints_mp 
 			(hash BINARY(160), track_id INTEGER, offset INTEGER)''')
 		
-		self.cursor.execute('''CREATE INDEX id ON fingerprints (hash)''')
+		self.cursor.execute('''CREATE INDEX id_mp ON fingerprints_mp (hash)''')
+
+		self.cursor.execute('''CREATE TABLE fingerprints_shazam 
+			(hash BINARY(160), track_id INTEGER, offset INTEGER)''')
+
+		self.cursor.execute('''CREATE INDEX id_shazam ON fingerprints_shazam (hash)''')
 
 		self.cursor.execute('''CREATE TABLE tracks 
 			(track_id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT)''')
@@ -30,16 +34,16 @@ class Database:
 
 		return self.cursor.lastrowid
 
-	def addFingerprint(self, query):
+	def addFingerprint(self, query, type = 'mp'):
 		""" Add a finderprint to database
 		"""
-		self.cursor.executemany("INSERT INTO fingerprints VALUES (?, ?, ?)", (query))
+		self.cursor.executemany("INSERT INTO fingerprints_%s VALUES (?, ?, ?)" % type, (query))
 		self.connection.commit()
 
-	def selectFingerprints(self, hash):
+	def selectFingerprints(self, hash, type = 'mp'):
 		"""
 		"""
-		self.cursor.execute('SELECT track_id, offset FROM fingerprints INDEXED BY id WHERE hash=?', (sqlite3.Binary(hash),))
+		self.cursor.execute("SELECT track_id, offset FROM fingerprints_%s INDEXED BY id_%s WHERE hash=?" % (type, type), (sqlite3.Binary(hash),))
 		return self.cursor.fetchall()
 
 	def getTrackNumber(self):
@@ -59,8 +63,6 @@ class Database:
 		"""
 		self.cursor.execute('SELECT track_id FROM tracks WHERE title=?', (title,))
 		return self.cursor.fetchone()
-
-
 
 	def __del__(self):
 		self.connection.close()

@@ -20,10 +20,6 @@ for file in os.listdir(music_dir):
 		music_list.append(file)
 print("%d tracks in database" % len(music_list))
 
-
-music_list = [file for file in music_list if (database.selectTrack(file) == None)]
-print("%d tracks to update" % len(music_list))
-
 shazam = Shazam()
 
 for track in music_list:
@@ -44,7 +40,7 @@ for track in music_list:
 		key_hash = sqlite3.Binary(key_hash)
 		query.append((key_hash, track_id, offset))
 
-	database.addFingerprint(query)
+	database.addFingerprint(query, 'shazam')
 
 
 
