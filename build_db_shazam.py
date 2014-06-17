@@ -10,8 +10,8 @@ current_dir = os.path.dirname(os.path.abspath(__file__))
 music_dir = current_dir + "/music"
 music_list = []
 
-if os.path.isfile(current_dir + "/database_shazam.db"):
-	os.remove(current_dir + "/database_shazam.db")
+if os.path.isfile(current_dir + "/database.sqlite"):
+	os.remove(current_dir + "/database.sqlite")
 database = Database()
 database.create()
 

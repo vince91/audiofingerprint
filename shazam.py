@@ -73,7 +73,7 @@ class Shazam:
 
 		return np.array(peaks)
 
-	def pairPeaks(self, peaks, max_distance = 80):
+	def pairPeaks(self, peaks, max_distance = 100):
 
 		pairs = []
 

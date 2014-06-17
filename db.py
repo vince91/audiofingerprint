@@ -13,6 +13,7 @@ class Database:
 		"""
 		self.cursor.execute('''CREATE TABLE fingerprints 
 			(hash BINARY(160), track_id INTEGER, offset INTEGER)''')
+		
 		self.cursor.execute('''CREATE INDEX id ON fingerprints (hash)''')
 
 		self.cursor.execute('''CREATE TABLE tracks 
