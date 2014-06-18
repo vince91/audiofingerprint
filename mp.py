@@ -41,7 +41,7 @@ class MatchingPursuit:
             for i in range(self.dictionary.sizes.size):
                 K = int(self.dictionary.sizes[i]/2)
                 for j in range(int(N/K)):
-                    mask[i*N + (j+k/4)*K: i*N+(j+(k+1)/4)*K] = np.ones(K/4) 
+                    mask[i*N + (j+k/4.)*K: i*N+(j+(k+1)/4.)*K] = np.ones(K/4) 
            
            
             i=0
@@ -105,18 +105,26 @@ class MatchingPursuit:
         
         entries = []
         atoms = self.extractAtoms(y)
-        for i in range(len(atoms) - 1):
-            k=0
+        for i in range(len(atoms)):
             asize,freq,offset = atoms[i]
-            for j in range(i+1,len(atoms)):
-                asizej,freqj,offsetj = atoms[j]
+            pairs = [(psize,pfreq,poffset) for (psize,pfreq,poffset) in atoms if (poffset >= offset and (psize,pfreq,poffset) != (asize,freq,offset))]
+                
+            # cantor couple function
+            def cant(k):
+                    ats,fq,of = k
+                    x = int(abs(800*((fq+1/2)/ats - (freq+1/2)/ats)))
+                    y = int((of-offset)/500)
+                    return (x+y)*(x+y+1)/2+y
+
+            pairs.sort(key=cant)
+            for j in range(min(4,len(pairs))):
+                asizej,freqj,offsetj = pairs[j]
                 deltat = int(offsetj - offset)
-                if abs(deltat) <= 6.5*8192 and np.abs((freqj+1/2)/asizej - (freq+1/2)/asize) <= 0.18:
-                    stringi = (str(asize)) + '-' + str(freq)
-                    stringj = (str(asizej)) + '-' + str(freqj)
-                    string = (stringi+','+stringj+','+str(int(deltat))).encode('utf-8')
-                    key_hash = sha1(string).digest()
-                    entries.append((key_hash, int(offset)))
+                stringi = (str(asize)) + '-' + str(freq)
+                stringj = (str(asizej)) + '-' + str(freqj)
+                string = (stringi+','+stringj+','+str(int(deltat))).encode('utf-8')
+                key_hash = sha1(string).digest()
+                entries.append((key_hash, int(offset)))
 
         return entries
                 
