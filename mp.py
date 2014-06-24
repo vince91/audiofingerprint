@@ -15,9 +15,48 @@ class MatchingPursuit:
         """
         self.dictionary = dictionary;
         self.m = m;
+        self.mask = None
+        self.__initMask()
 
 
+    def __initMask(self):
+        """ __initMask
+            init the Mask pattern for each size
+        """
 
+        self.maskpat = {}
+  
+        for size in self.dictionary.sizes:
+            K = int(size/2)
+            self.maskpat[size] = np.ones(K)
+            self.maskpat[size][:3*K/64] = np.zeros(3*K/64) 
+            self.maskpat[size][7.*K/8:K] = np.zeros(K/8) 
+
+    def getMask(self,N):
+        """ getMask
+            create a new mask for the given size of signal
+        """
+
+        nd = N*self.dictionary.sizes.size
+
+        if self.mask != None and self.mask.size == nd:
+            return np.copy(self.mask)
+        else:
+            mask = np.zeros(nd)
+            i=0
+            for size,m in self.maskpat.items(): 
+                K=size/2
+                P = int(N/K)
+                mask[i*N:(i+1)*N] = np.tile(m,P)
+                i +=1
+            return mask
+
+    def buildMask(self,N):
+        """ buildMask
+            build the mask for a given size
+        """
+
+        self.mask = self.getMask(N)
 
 
     def sparse(self,s):
@@ -33,56 +72,46 @@ class MatchingPursuit:
         y = np.zeros(nd)
 
 
-        for k in range(4):
-            # Mask
-            mask = np.int16(np.zeros(nd))
-           
-            
-            for i in range(self.dictionary.sizes.size):
-                K = int(self.dictionary.sizes[i]/2)
-                for j in range(int(N/K)):
-                    mask[i*N + (j+k/4.)*K: i*N+(j+(k+1)/4.)*K] = np.ones(K/4) 
-           
-           
-            i=0
-            new = None
-            tmp = None
-            # Loop until we got m atoms
-            for i in range(self.m//4):
-                #print(i, "\t", new)
-                tmp = self.dictionary.mdctOp(res,update=new,old=tmp)
-                #Select new element
-                i+=1
-                new = np.argmax(abs(tmp * mask))
-                #udpate mask
-                if y[new] == 0:
-                    # index of size
-                    nid = new//N
-                    # size of new
-                    nsize = self.dictionary.sizes[nid]
-                    # frame index of the new item
-                    nframe = (new%N)//(nsize//2)
-                    # time of the atom
-                    ntime = nframe*(nsize//2)
-                    # freq of the new atom
-                    nfreq = (new%N)%(nsize//2)
+        # Mask
+        mask = self.getMask(N)
+       
+       
+        new = None
+        tmp = None
+        # Loop until we got m atoms
+        for i in range(self.m):
+            tmp = self.dictionary.mdctOp(res,update=new,old=tmp)
+            #Select new element
+            new = np.argmax(abs(tmp * mask))
+            #udpate mask
+            if y[new] == 0:
+                # index of size
+                nid = new//N
+                # size of new
+                nsize = self.dictionary.sizes[nid]
+                # frame index of the new item
+                nframe = (new%N)//(nsize//2)
+                # time of the atom
+                ntime = nframe*(nsize//2)
+                # freq of the new atom
+                nfreq = (new%N)%(nsize//2)
 
-                    for j in range(self.dictionary.sizes.size):
-                        size = self.dictionary.sizes[j]
-                        K=size//2
-                        first = ntime//K
-                        first = first - 1 if first > 0 else 0
-                        last = np.minimum( (ntime+nsize-1) // K + 1, N//K)
-                        freq = int(nfreq/nsize*size)
-                        deltafreq = int(0.03*size - 1/2)
-                        for frame in range(first,last):
-                            mask[j*N+frame*K+freq - deltafreq:j*N+frame*K +freq +deltafreq] = 0
+                for j in range(self.dictionary.sizes.size):
+                    size = self.dictionary.sizes[j]
+                    K=size//2
+                    first = ntime//K
+                    first = first - 1 if first > 0 else 0
+                    last = np.minimum( (ntime+nsize-1) // K + 1, N//K)
+                    freq = int(nfreq/nsize*size)
+                    deltafreq = int(0.03*size - 1/2)
+                    for frame in range(first,last):
+                        mask[j*N+frame*K+freq - deltafreq:j*N+frame*K +freq +deltafreq] = 0
 
-                # update coefficient
-                y[new] += tmp[new]
-                atom = self.dictionary.atom(N,new)
-                res -=  tmp[new] * atom
-        
+            # update coefficient
+            y[new] += tmp[new]
+            atom = self.dictionary.atom(N,new)
+            res -=  tmp[new] * atom
+    
         return y
 
     def extractAtoms(self, y):
@@ -117,7 +146,7 @@ class MatchingPursuit:
                     return (x+y)*(x+y+1)/2+y
 
             pairs.sort(key=cant)
-            for j in range(min(4,len(pairs))):
+            for j in range(min(3,len(pairs))):
                 asizej,freqj,offsetj = pairs[j]
                 deltat = int(offsetj - offset)
                 stringi = (str(asize)) + '-' + str(freq)
