@@ -10,6 +10,8 @@
 \usepackage{amsfonts}
 \usepackage{mathtools}
 \usepackage{float}
+\usepackage{hyperref}
+
 
 \renewcommand{\FrenchLabelItem}{\textbullet}
 
@@ -58,6 +60,10 @@ méthode de calcul des clés diffèrent :  La méthode «classique» -- utilisée notam
 l'application shazam -- basée sur le spectrogramme du signal, et une méthode basée sur une
 décomposition parcimonieuse du signal avec l'algorithme \emph{matching pursuit}.
 
+Nous avons choisi de programmer en langage Python, et nous utilisons SQLite pour stocker les empreintes acoustiques.
+
+Le code est accessible à l'adresse suivante :
+\url{https://github.com/vince91/audiofingerprint}
 
 \section{Principe de base}
 
@@ -78,9 +84,60 @@ Le signal audio duquel nous devons extraire l'empreinte acoustique est tout d'ab
 
 \subsection{Extraction de pics d'intensité}
 
-Le spectrogramme est découpé en 10x10 cases
+Le spectrogramme est découpé selon un quadrillage 10x10. Dans chaque case du quadrillage nous extrayons le point d'intensité maximale, qui définira un pic. Nous avons donc 100 pics d'itensité par trame de 5 secondes. Un pic est défini par sa position (sa fréquence et l'instant à laquel il apparaît) :
 
+\begin{equation}
+	p_i = (f_i, t_i)
+\end{equation}
 
+\begin{figure}[htbp]
+    \center
+    \includegraphics[width=13cm]{shazam2.png}
+    \caption{Extraction des pics d'intensité pour une trame}
+\end{figure}
+
+\subsection{Couplage des pics}
+
+Nous créons des couples à partir des pics d'intensité. Un couple constitue une clé, chaque clé est défini par la fréquence du premier pic, la fréquence du deuxième pic, et la différence des instants des deux pics :
+
+\begin{equation}
+\begin{split} 
+	p_1 = (f_1, t_1), p_2 = (f_2, t_2) \\
+	c_k = (f_1, f_2, \delta_t=t_2-t_1)
+\end{split} 
+\end{equation}
+
+Pour constituer un couple les pics précedents doivent satisfaire 2 conditions :
+\begin{itemize}
+	\item $ t_2 > t_1 $
+	\item la distance euclidiènne entre les 2 pics doit être inférieur à un certain seuil d (le nombre de clé que l'on prendra pour une trame dépendra de ce seuil)
+\end{itemize}
+
+\begin{figure}[htbp]
+    \center
+    \includegraphics[width=13cm]{shazam3.png}
+    \caption{Couplage des pics d'intensité}
+\end{figure}
+
+\subsection{Construction de la base de données}
+
+Pour chaque musique dans notre base de données, nous appliquons les étapes décrite précedemment. Le processus est répété 5 fois, tout en faisant varier le seuil d (seuil de distance admissible entre les pics). Nous obtenons pour la méthode Shazam 5 base de données distinctes :
+
+\begin{tabular}{|c|c|c|}
+\hline
+   BDD n° & Nombre de clés par seconde & Poids (Megaoctets) \\
+\hline
+   1 & 22,6 & 23 \\
+\hline
+   2 & 39,6 & 40,4 \\
+\hline
+   3 & 59 & 60 \\
+\hline
+   4 & 81,6 & 83,1 \\
+\hline
+   5 & 100,2 & 102,8  \\
+\hline
+\end{tabular}
 
 %\emph{italique}
 %\textbf{gras}

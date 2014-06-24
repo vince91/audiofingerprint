@@ -20,7 +20,7 @@ for file in os.listdir(music_dir):
 		music_list.append(file)
 print("%d tracks in database" % len(music_list))
 
-shazam = Shazam(142)
+shazam = Shazam(92)
 
 total_duree = 0
 total_keys = 0
