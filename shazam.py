@@ -3,12 +3,13 @@ import matplotlib.pyplot as plt
 
 class Shazam:
 
-	def __init__(self, window_size = 1024, frame_duration = 5):
+	def __init__(self, max_distance, window_size = 1024, frame_duration = 5):
 		self.window_size = window_size
 		self.hop = window_size/4
 		self.window = 0.5 * (1 - np.cos(2*np.pi*np.arange(window_size)/(window_size-1)))
 		self.frame_duration = frame_duration
 		self.min_real = 0.0000000001
+		self.max_distance = max_distance
 
 	def processTrack(self, wavdata):
 
@@ -74,14 +75,14 @@ class Shazam:
 
 		return np.array(peaks)
 
-	def pairPeaks(self, peaks, max_distance = 100):
+	def pairPeaks(self, peaks):
 
 		pairs = []
 
 		for peak_orig in peaks:
 			for peak in peaks:
 				if peak[0] > peak_orig[0]:
-					if np.linalg.norm(peak_orig - peak) <= max_distance:
+					if np.linalg.norm(peak_orig - peak) <= self.max_distance:
 						pairs.append([peak_orig, peak])
 
 

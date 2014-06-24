@@ -11,12 +11,12 @@ class Database:
 		"""
 		"""
 		self.cursor.execute('''CREATE TABLE fingerprints_mp 
-			(hash BINARY(160), track_id INTEGER, offset INTEGER)''')
+			(hash BINARY(40), track_id INTEGER, offset INTEGER)''')
 		
 		self.cursor.execute('''CREATE INDEX id_mp ON fingerprints_mp (hash)''')
 
 		self.cursor.execute('''CREATE TABLE fingerprints_shazam 
-			(hash BINARY(160), track_id INTEGER, offset INTEGER)''')
+			(hash BINARY(40), track_id INTEGER, offset INTEGER)''')
 
 		self.cursor.execute('''CREATE INDEX id_shazam ON fingerprints_shazam (hash)''')
 

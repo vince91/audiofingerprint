@@ -66,6 +66,22 @@ On défini une collection
 
 \section{Méthode Shazam}
 
+\subsection{Spectrogramme}
+
+Le signal audio duquel nous devons extraire l'empreinte acoustique est tout d'abord découpé en trame de 5 secondes. Pour chacune de ces trames, nous calculons son spectrogramme (en utilisant des fenêtres de 1024 échantillons et un recouvrement de 75\%).
+
+\begin{figure}[htbp]
+    \center
+    \includegraphics[width=13cm]{shazam1.png}
+    \caption{Passage dans le domaine temps-fréquence}
+\end{figure}
+
+\subsection{Extraction de pics d'intensité}
+
+Le spectrogramme est découpé en 10x10 cases
+
+
+
 %\emph{italique}
 %\textbf{gras}
 %\begin{itemize}
@@ -75,3 +91,4 @@ On défini une collection
 
 
 \end{document}
+
