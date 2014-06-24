@@ -1,0 +1,77 @@
+
+\documentclass[12pt]{article}
+
+\usepackage[francais]{babel}
+\usepackage[latin1]{inputenc} 
+\usepackage[T1]{fontenc}
+\usepackage{graphicx}
+
+\usepackage{subfig}
+\usepackage{amsfonts}
+\usepackage{mathtools}
+\usepackage{float}
+
+\renewcommand{\FrenchLabelItem}{\textbullet}
+
+\title{Rapport de projet \bsc{si}380: Empreinte acoustique}
+\author{Maxime \bsc{Sirbu}, 
+	\texttt{maxime.sirbu@telecom-paristech.fr}\\
+	Vincent \bsc{Timofti}, \texttt{vincent.timofti@telecom-paristech.fr}\\
+	Télécom Paristech,\\\\
+	}
+\date{\today}
+
+
+
+\graphicspath{ {./images/} }
+
+\begin{document}
+
+
+\maketitle
+
+
+\section{Introduction}
+
+L'empreinte acoustique -- ou \emph{audio fingerprint} -- désigne une représentation d'un signal
+audio pouvant servir d'identifiant unique. Le critère d'identifiabilté est en général celui de
+l'oreille humaine, \emph{ie} deux signaux considérés comme identiques à l'écoute doivent avoir une
+empreinte acoustique similaire. Par conséquent le système de construction d'empreinte doit être
+robuste aux petites déformations qui n'altèrent pas l'identifiabilité du signal. Déformation telles
+que l'ajout de bruit, la réverbération, la distortion...
+
+De plus, un système efficace sera aussi robuste aux décalage temporels, c'est à dire qu'il sera
+capable d'identifier un extrait de signal, même si celui si n'est pas aligné temporelement avec le
+signal utilisé pour l'apprentissage de l'empreinte.
+
+Le sytème d'identification par empreinte doit aussi être rapide et capable d'identifier un extrait
+parmi un très grand nombre de signaux. Ceci pose deux contraintes majeures pour notre système :
+\begin{itemize}
+	\item La base de donnée contenant les empreintes ne doit pas être de taille trop importante.
+	\item Les empreintes doivent permettre de différencier deux signaux distincts avec sans
+		nécessiter une trop grande complexité.
+\end{itemize}
+
+Nous présenterons deux système de création et d'identification d'empreintes. Ces deux méthodes
+utilisent un même principe de fonctionnement basé sur une table de hachage et des clés. Seule la
+méthode de calcul des clés diffèrent :  La méthode «classique» -- utilisée notamment par
+l'application shazam -- basée sur le spectrogramme du signal, et une méthode basée sur une
+décomposition parcimonieuse du signal avec l'algorithme \emph{matching pursuit}.
+
+
+\section{Principe de base}
+
+On défini une collection
+
+
+\section{Méthode Shazam}
+
+%\emph{italique}
+%\textbf{gras}
+%\begin{itemize}
+%	\item élément 1
+%	\item élément 2
+%\end{itemize}
+
+
+\end{document}
