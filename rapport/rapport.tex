@@ -11,11 +11,20 @@
 \usepackage{mathtools}
 \usepackage{float}
 \usepackage{hyperref}
+\usepackage{pict2e}
+\usepackage{geometry}
 
+% section break
+\usepackage{titlesec}
+\newcommand{\sectionbreak}{\clearpage}
+
+
+% geometry
+\geometry{top=2.5cm,bottom=3cm,left=2.5cm,right=2.5cm}
 
 \renewcommand{\FrenchLabelItem}{\textbullet}
 
-\title{Rapport de projet \bsc{si}380: Empreinte acoustique}
+\title{Rapport de projet SI380: Empreinte acoustique}
 \author{Maxime \bsc{Sirbu}, 
 	\texttt{maxime.sirbu@telecom-paristech.fr}\\
 	Vincent \bsc{Timofti}, \texttt{vincent.timofti@telecom-paristech.fr}\\
@@ -27,6 +36,7 @@
 
 \graphicspath{ {./images/} }
 \DeclareMathOperator*{\argmin}{arg\,min}
+\DeclareMathOperator*{\argmax}{arg\,max}
 
 \begin{document}
 
@@ -67,6 +77,7 @@ Le code est accessible à l'adresse suivante :
 \url{https://github.com/vince91/audiofingerprint}
 
 \section{Principe de base}
+\label{sec:principe_base}
 
 \subsection{Recherche du plus proche voisin}
 On défini une collection $\chi = \{x_1,x_2,\dots,x_L\}$ de $L$ signaux audios et un requête $q$ (un
@@ -92,12 +103,13 @@ résultats de recherche des descripteurs de la requête nous permet alors de retro
 le plus de similitudes mais  aussi le décalage de la requête avec celui-ci
 
 \subsubsection{Table de hachage}
+\label{sec:table_hachage}
 Pour pouvoir effectuer une comparaison efficace des descripteurs, il faut utiliser un méthode
 d'indexation rapide. L'un des modèles les plus performants est celui de la table de hachage
 
 Un table de hachage se base sur un fonctionnement par paire clé-valeur et sur une fonction de
-hachage. Soit une paire clé-valeur $(c,v)$ dans un espace $\cal{C} \times \mathbb{V}$, une fonction
-de hachage $h \,: \,\cal{C} \rightarrow \mathbb{H}$ associe à chaque clé un indice de localisation
+hachage. Soit une paire clé-valeur $(c,v)$ dans un espace $\mathcal{C} \times \mathbb{V}$, une fonction
+de hachage $h \,: \,\mathcal{C} \rightarrow \mathbb{H}$ associe à chaque clé un indice de localisation
 dans la table. La localisation de la paire $(c,v)$ est alors déterminée par la valeur de $h(c)$ : il
 n'est pas nécessaire de parcourir toute la table.
 
@@ -146,7 +158,7 @@ comme montré en figure~\ref{fig:ex_hist}.
 
 Le \emph{plus proche voisin} est donc donné par :
 \[
-	k_q,\tau_q = \argmin_{k \in [0,\dots,L], \tau \in \mathbb{Z}} \mathbf{H}_k(\tau)
+	k_q,\tau_q = \argmax_{k \in [0,\dots,L], \tau \in \mathbb{Z}} \mathbf{H}_k(\tau)
 \]
 où $\tau_q$ est le décalage de l'extrait avec son \emph{plus proche voisin}.
 
@@ -205,6 +217,7 @@ Pour constituer un couple les pics précedents doivent satisfaire 2 conditions :
 
 Pour chaque musique dans notre base de données, nous appliquons les étapes décrite précedemment. Le processus est répété 5 fois, tout en faisant varier le seuil d (seuil de distance admissible entre les pics). Nous obtenons pour la méthode Shazam 5 base de données distinctes :
 
+\begin{center}
 \begin{tabular}{|c|c|c|}
 \hline
    BDD n° & Nombre de clés par seconde & Poids (Megaoctets) \\
@@ -220,14 +233,186 @@ Pour chaque musique dans notre base de données, nous appliquons les étapes décri
    5 & 100,2 & 102,8  \\
 \hline
 \end{tabular}
+\end{center}
 
-%\emph{italique}
-%\textbf{gras}
-%\begin{itemize}
-%	\item élément 1
-%	\item élément 2
-%\end{itemize}
+\section{Méthode \emph{Matching Pursuit}}
+
+La seconde méthode de calcul des clés est basé sur l'algorithme de décomposition
+parcimonieuse \emph{matching pursuit} ou \bsc{mp}. Cet algorithme va nous permettre d'ajouter une
+information sur les tailles des atomes qui sont ici nos descripteurs locaux, en plus de
+l'information fréquentielle et temporelle.
+
+\subsection{Formulation mathématiques}
+Soit un espace de Hilbert $\mathcal H$, un dicionnaire d'éléments $d_\gamma \in \mathcal H$ et un
+élément $x \in \mathcal H$, l'algorithme \bsc{mp} va construire une approximation de $x$ : $\tilde x_n =
+\sum_{i=1}^{n}\alpha_i d_{\gamma^i}$ après $n$ itérations.
+
+L'algorithme est un algorithme itératif en deux étapes. Initialement on défini le \textbf{résiduel}
+$R^0x = x$, l'ensemble des éléments du dictionnaire sélectionnés $\Gamma^0 = \emptyset$. Lors de la
+$n^{\text{ième}}$ itération, on procède alors comme suivant :
+\begin{itemize}
+	\item Sélection : on sélectionne un élement du dictionnaire $d_{\gamma^n}$ selon un critère
+		de $\mathcal C$.
+	\item Mise à jour : on met à jour l'approximation selon une règle $\mathcal A$ et on recalcule
+		le résiduel.
+\end{itemize}
+La figure~\ref{fig:mp} décrit le fonctionnement de cet algorithme.
+
+\begin{figure}[htbp]
+	\centering
+	\input{images/algomp}
+	\caption{L'algorithme \bsc{mp}}
+	\label{fig:mp}
+\end{figure}
+
+\subsection{Implémentation}
+
+Pour notre implémentation, nous choisissons un dictionnaire redondant constitué d'une union de
+bases \bsc{mdct} (\emph{Modified Discrete Cosine Transform}). La \bsc{mdct} est une transformée
+basée sur la tranfromée en consinys discrete.
+
+Pour un vecteur $x$ de taille $N=PK$ (\emph{ie} $x$ est composé de $P$ segments de taille $K$). La
+\bsc{mdct} de taille $L = 2K$ s'écrit comme une matrice de transformation $\mathbf{T}$ de taille $N
+\times N$ :
+\[
+	\mathbf{T}[n,pK+k] = \phi_{p,k}[n]\; \text{pour}\; p \in [0\dots P-1], k \in [0\dots K-1]
+	\;\text{et}\; n \in [0\dots N-1]
+\]
+où :
+\[
+	\phi_{p,n}[n] = w_p[u] \sqrt{\frac 2K} \cos \left[\frac \pi K \left( u + \frac{K+1}2 \right)
+		\left( k+\frac 12 \right) \right]
+\]
+avec $u = n-(p-\frac 12)K$ et $w_p$ une fenêtre d'analyse de la trame $p$. La condition d'inversion
+qui permet une reconstruction parfaite se comprend alors comme une condition d'orthogonalité sur
+$\mathbf{T}$ :
+\[
+	\mathbf{T}\mathbf{T}^T = \mathbf{I}
+\]
+on peut alors montrer que cette condition est vérifiée lorsque le fenêtre vérifie pour  $u \in
+[0\dots K-1]$:
+\begin{align}
+	\label{eq:win_1}	w_0[u] & = 1 \\
+	\label{eq:win_2}	w_p^2[u+\frac L2] + w^2_{p+1}[u] & =  1,p \in [0\dots P-2]\\
+	\label{eq:win_3}	w_{P-1}[u+\frac L2] & = 1
+\end{align}
+
+Les conditions~\ref{eq:win_1} et~\ref{eq:win_3} assurent la conservation aux bords du signal.
+La fenêtre que nous utilisons pour le mathcalcul de \bsc{mdct} est définie par :
+\[
+	w[u] = \sin\left[\frac\pi L \left( u + \frac 12 \right)\right]
+\]
+et vérifie bien la condition~\ref{eq:win_2}.
+
+Notre dictionnaire est donc constitué d'atomes similaires à la figure~\ref{fig:atom}.
+\begin{figure}[htbp]
+	\centering
+	\includegraphics[width=.3\textwidth]{atom}
+	\caption{Atome d'une union de base mdct}
+	\label{fig:atom}
+\end{figure}
+En utilisant un dicitonnaire d'union de bases \bsc{mdct} avec différentes tailles de fênetres, on
+peut alors utiliser des atomes de tailles différentes pour être plus précis dans notre algorithme
+\bsc{mp}.
 
 
+Le critère $\mathcal C$ sélectionne donc l'atome ayant la plus grande valeur dans le résultat de
+l'algorithme, et la mise à jour se fait en calculant la \bsc{mdct} inverse des atomes sélectionnés.
+La figure~\ref{fig:mp_ex}  montre un exemple d'application de l'algorithme \bsc{mp}.
+
+
+\begin{figure}[htbp]
+	\centering
+	\subfloat[]{\label{fig:mp_signal}\includegraphics[width=.5\textwidth]{mp_init}}
+	\subfloat[]{\label{fig:mp_rec}\includegraphics[width=.5\textwidth]{mp_rec}}\\
+	\subfloat[]{\label{fig:mp_signal}\includegraphics[width=.6\textwidth]{mp_result}}
+	\caption{Exemple d'application de l'algorithme \bsc{mp} : \ref{fig:mp_signal} forme d'onde du
+	signal d'origine. \ref{fig:mp_rec} signal reconstruit après 1000 itérations.
+	\ref{fig:mp_signal}  visualisation de résultat dans le plan temps-fréquence.}
+	\label{fig:mp_ex}
+\end{figure}
+
+
+
+
+
+\subsection{Améliorations}
+Afin de réduire la complexité de l'algorithme \bsc{mp} et d'augmenter son efficacité, nous avons
+effectuer de légères modification dans le déroulement de l'algorithme.
+
+\subsubsection{Sélection}
+À chaque itération, il est nécessaire de calculer la tranformée \bsc{mdct} du résiduel lors de
+l'étape de sélection. Ceci peut devenir coûteux en temps de calcul si l'on a un grand nombre
+d'itérations.
+
+Cependant il n'est pas nécessaire de calculer la tranformée pour tout le signal, en effet seul la
+partie temporel correspondant à l'atome sélectionné est affectée par la mise à jour. Il n'est donc
+pas nécessaire de recalculer la transformée correspondant aux atomes qui ne sont pas correlés avec
+l'atome sélectionné.
+
+On modifie donc la fonction de calcul de \bsc{mdct}, pour ne mettre à jour que la partie du signal
+où les atomes pourrait être affecté par le changement de résiduel.
+
+
+\subsubsection{Masque}
+L'algorithme \bsc{mp} à tendance à sélectionner les atomes la où il y a beacoup d'énergie, ils sont
+donc en général proches fréquentiellement et temporellement.
+
+L'idée est donc de changement le critère de sélection en utilsant un masque :
+\[
+	\mathcal{C_M}(R^nx,\mathcal D) = \argmax_{d_i \in \mathcal D}(|\langle
+	R^nx,d_i \rangle|\mathcal M(d_i|\Gamma^n))
+\]
+où $\mathcal{M}(d_i|\Gamma^n)$ est un masque temps-fréquence construit à partir du support de
+l'approximation courante $\Gamma^n$. On cherchera en donc à exprimer $\mathcal{M}$ de tel sorte que
+la sélection d'un atome dans le voisinage temps-fréquence d'un atome déjà sélectionné soit fortement
+pénalisé voire interdite.  On peut donc utiliser l'une des mesures suivantes:
+\begin{align}
+	\label{eq:mask1} \mathcal M(d_i|\Gamma^n) & = 1 - \max_{\gamma \in \Gamma^n} |\langle
+	d_i,d_\gamma \rangle|\\
+	\label{eq:mask2}\mathcal M(d_i|\Gamma^n) & = \left\{ \begin{array}{cl}
+			0  & \text{si}\; \exists \gamma \in \Gamma^n, |\langle d_i,d_\gamma \rangle|
+			\neq 0\\
+			1 & \text{sinon}
+		\end{array}
+		\right.
+\end{align}
+Bien entendu, le masque défini par~\ref{eq:mask2} est bien plus restrictif que celui défini
+par~\ref{eq:mask1}.
+
+
+
+
+\subsection{Construction des clés}
+
+Dans cette deuxième méthode nous utilsons donc l'algorithme \emph{Matching Pursuit} pour construire
+nos clés.  On découpe notre signal d'entrée en trames de 5 secondes, puis on extrait les un nombre
+$n$ d'atomes en utilisant l'algorithme \bsc{mp} avec un dictionnaire composé de trois tailles
+d'atome différentes (128,1024 et 8192 échantillons).  On va ensuite apairer chaque atomes avec $p$
+de ses plus proches voisins dans le plan temps-fréquence, en ne considérant que ceux
+apparaisant après l'atome choisi. La figure \label{fig:mp_pairs} montre un exemple d'apairage avec
+$p=1$.
+\begin{figure}[htbp]
+	\centering
+	\includegraphics[width=.8\textwidth]{matching_pursuit_pairs}
+	\caption{Sélection des paires d'atomes pour $p=1$}
+	\label{fig:mp_pairs}
+\end{figure}
+
+On peut ensuite construire les clés qui constitueront notre base comme décrit dans la
+section~\ref{sec:table_hachage}. On utilise en plus l'information d'échelle des atomes de la
+paire pour construire notre clé, qui devient donc le quintuplet	:
+\[
+	c = (f_1,e_1,f_2,e_2,\delta_t = t_1 -t_2)
+\]
+Le reste du processus est le même que le principe de base décrit en section~\ref{sec:principe_base},
+commun aux deux méthodes.
+
+
+\subsection{Performances}
+
+
+\clearpage
+\tableofcontents
 \end{document}
 
