@@ -1,0 +1,42 @@
+\setlength{\unitlength}{1mm}
+\begin{picture}(160,28)(0,0)
+	\put(14,0){\shortstack{$n = 1$}}
+	\put(12,5){\shortstack{$\Gamma^0 = \emptyset$}}
+	\put(9,11){\shortstack{$R^0x = x$}}
+	\put(0,17){\shortstack{Entrées : $x,\mathcal D$}}
+
+	\put(27,18){\vector(1,0){11}}
+
+	\put(50,22){\shortstack{Sélection}}
+	\put(40,15){\shortstack{$d_{\gamma^n} = \mathcal{C}(\mathcal{D},R^{n-1}x )$}}
+	\put(40,8){\shortstack{$\Gamma^n = \Gamma^{n-1} \cup \gamma_n$}}
+	\put(57,15){\oval[2](38,25)}
+	\put(38,20){\line(1,0){38}}
+
+
+	\put(76,18){\vector(1,0){5}}
+
+	\put(90,22){\shortstack{Mise à jour}}
+	\put(83,15){\shortstack{$\tilde{x}_n = \mathcal A(\Gamma^n,R^{n-1}x)$}}
+	\put(83,8){\shortstack{$R^nx = x - \tilde{x}_n$}}
+	\put(100,15){\oval[2](38,25)}
+	\put(81,20){\line(1,0){38}}
+
+
+	\put(119,18){\vector(1,0){5}}
+	\put(124,16){\shortstack{\footnotesize Condition\\\footnotesize d'arrêt ?}}
+	\put(132,19){\oval[2](16,10)}
+
+
+	\put(132,14){\line(0,-1){14}}
+	\put(124,8){\shortstack{\footnotesize Non}}
+	\put(132,0){\line(-1,0){102}}
+	\put(31,0){\shortstack{\footnotesize $n \leftarrow n+1$}}
+	\put(30,0){\vector(0,1){18}}
+
+
+	\put(140,18){\vector(1,0){5}}
+	\put(141,13){\shortstack{\footnotesize Oui}}
+
+	\put(146,17){\shortstack{Sorties $\tilde{x}_n,R^nx$}}
+\end{picture}
