@@ -96,10 +96,17 @@ dans la table. La localisation de la paire $(c,v)$ est alors déterminée par la v
 n'est pas nécessaire de parcourir toute la table.
 
 Dans les deux cas nous utiliserons alors ce système de table de hachage pour nos descripteurs
-locaux. Chaque paire clé-valeur de la table sera construite comme ceci : on sélectionne deux valeurs
+locaux. Chaque paire clé-valeur de la table sera construite comme le montre la figure~\ref{fig:ex_cles} : on sélectionne deux valeurs
 temps-fréquence $(f_1,t_1)\, (f_2,t_2)$ par une méthode propre à chaque système, la clé est alors le
 triplet \[ c = (f_1,f_2,\delta_t = t_1 - t_2)\]
 La valeur enregistrée est le duet $(t_1,k)$ où $k \in [0,\dots,L-1]$ est l'indice du signal de référence.
+
+\begin{figure}[htbp]
+	\center
+	\includegraphics[width=.7\textwidth]{exemple_cles_not}
+	\caption{Construction des clés}
+	\label{fig:ex_cles}
+\end{figure}
 
 Lors de la construction de la table, il est normal qu'une clé apparaisse plusieurs fois dans
 différents signaux, voir dans le même signal. On stocke cependant bien chaque valeur associée à une
@@ -119,8 +126,17 @@ On pourrait alors établir le décompte du nombre de clé en commun entre la requêt
 mais on traiterait alors chaque descripteur local indépendamment les uns des autres. Il est donc
 plus intéressant de prendre en compte le décalage temporel.
 
-On construit alors les histogrammes $\mathbf{H}_k(\tau) \, : \, \mathbb{Z} \rightarrow \mathbb{N}$ qui
-contienent pour chaque indice $k \in [0,\dots,L-1]$ le nombre de clés ayant un décalage $\tau$.
+On construit alors les histogrammes $\mathbf{H}_k(\tau) \, : \, \mathbb{Z} \rightarrow \mathbb{N}$
+qui contienent pour chaque indice $k \in [0,\dots,L-1]$ le nombre de clés ayant un décalage $\tau$
+comme montré en figure~\ref{fig:ex_hist}.
+
+
+\begin{figure}[htbp]
+	\center
+	\includegraphics[width=.7\textwidth]{hist}
+	\caption{Exemples d'histogrammes}
+	\label{fig:ex_hist}
+\end{figure}
 
 Le \emph{plus proche voisin} est donc donné par :
 \[
