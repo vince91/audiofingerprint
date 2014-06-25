@@ -1,0 +1,261 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="210mm"
+   height="297mm"
+   id="svg2"
+   version="1.1"
+   inkscape:version="0.48.4 r9939"
+   sodipodi:docname="exemple_cles.svg">
+  <defs
+     id="defs4">
+    <font
+       horiz-adv-x="1024"
+       id="font2998"
+       inkscape:label="fonte 1">
+      <font-face
+         units-per-em="1024"
+         id="font-face3000"
+         font-family="aaa" />
+      <missing-glyph
+         d="M0,0h1000v1024h-1000z"
+         id="missing-glyph3002" />
+    </font>
+  </defs>
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="0.98994949"
+     inkscape:cx="119.08478"
+     inkscape:cy="514.28571"
+     inkscape:document-units="px"
+     inkscape:current-layer="layer1"
+     showgrid="false"
+     inkscape:window-width="1920"
+     inkscape:window-height="1050"
+     inkscape:window-x="0"
+     inkscape:window-y="30"
+     inkscape:window-maximized="1" />
+  <metadata
+     id="metadata7">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="Calque 1"
+     inkscape:groupmode="layer"
+     id="layer1">
+    <image
+       y="129.50504"
+       x="-59.999989"
+       id="image2993"
+       xlink:href="file:///home/maxime/projets/audiofingerprint/rapport/images/exemple_cles.png"
+       height="600"
+       width="800"
+       inkscape:export-filename="/home/maxime/projets/audiofingerprint/rapport/images/exemple_cles_not.png"
+       inkscape:export-xdpi="209"
+       inkscape:export-ydpi="209" />
+    <path
+       style="fill:none;stroke:#000000;stroke-width:3.09650779px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="m 307.08638,491.5974 c 89.90357,0 89.90357,0 89.90357,0 l -1.01015,0"
+       id="path2996"
+       inkscape:connector-curvature="0"
+       inkscape:export-filename="/home/maxime/projets/audiofingerprint/rapport/images/exemple_cles_not.png"
+       inkscape:export-xdpi="209"
+       inkscape:export-ydpi="209" />
+    <text
+       xml:space="preserve"
+       style="font-size:28.19318771px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Webdings;-inkscape-font-specification:Webdings"
+       x="304.01962"
+       y="737.98718"
+       id="text3004"
+       sodipodi:linespacing="125%"
+       transform="scale(1.0018414,0.99816198)"
+       inkscape:export-filename="/home/maxime/projets/audiofingerprint/rapport/images/exemple_cles_not.png"
+       inkscape:export-xdpi="209"
+       inkscape:export-ydpi="209"><tspan
+         sodipodi:role="line"
+         id="tspan3006"
+         x="304.01962"
+         y="737.98718">Temps</tspan><tspan
+         sodipodi:role="line"
+         x="304.01962"
+         y="773.22864"
+         id="tspan3008" /></text>
+    <text
+       xml:space="preserve"
+       style="font-size:31.98142433px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Webdings;-inkscape-font-specification:Webdings"
+       x="-487.90564"
+       y="-17.051878"
+       id="text3010"
+       sodipodi:linespacing="125%"
+       transform="matrix(0,-1,1,0,0,0)"
+       inkscape:export-filename="/home/maxime/projets/audiofingerprint/rapport/images/exemple_cles_not.png"
+       inkscape:export-xdpi="209"
+       inkscape:export-ydpi="209"><tspan
+         sodipodi:role="line"
+         x="-487.90564"
+         y="-17.051878"
+         id="tspan3014">Fréquence</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:40px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Times New Roman;-inkscape-font-specification:Times New Roman"
+       x="338.40112"
+       y="531.12347"
+       id="text3018"
+       sodipodi:linespacing="125%"
+       inkscape:export-filename="/home/maxime/projets/audiofingerprint/rapport/images/exemple_cles_not.png"
+       inkscape:export-xdpi="209"
+       inkscape:export-ydpi="209"><tspan
+         sodipodi:role="line"
+         id="tspan3020"
+         x="338.40112"
+         y="531.12347"
+         style="font-style:italic;font-family:Times New Roman;-inkscape-font-specification:Times New Roman">δt</tspan></text>
+    <flowRoot
+       xml:space="preserve"
+       id="flowRoot3022"
+       style="fill:black;stroke:none;stroke-opacity:1;stroke-width:1px;stroke-linejoin:miter;stroke-linecap:butt;fill-opacity:1;font-family:Webdings;font-style:normal;font-weight:normal;font-size:40px;line-height:125%;letter-spacing:0px;word-spacing:0px;-inkscape-font-specification:Webdings;font-stretch:normal;font-variant:normal"><flowRegion
+         id="flowRegion3024"><rect
+           id="rect3026"
+           width="34.345188"
+           height="318.19806"
+           x="-382.84781"
+           y="569.50928" /></flowRegion><flowPara
+         id="flowPara3028"></flowPara></flowRoot>    <path
+       style="fill:none;stroke:#000000;stroke-width:1.70000005;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:1.70000005, 1.70000005;stroke-dashoffset:0"
+       d="m 307.08637,464.4534 0,204.05082"
+       id="path3806"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="cc"
+       inkscape:export-filename="/home/maxime/projets/audiofingerprint/rapport/images/exemple_cles_not.png"
+       inkscape:export-xdpi="209"
+       inkscape:export-ydpi="209" />
+    <path
+       style="fill:none;stroke:#000000;stroke-width:1.70000005;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:1.70000005, 1.70000005;stroke-dashoffset:0"
+       d="m 399.01026,488.69705 0,178.79701"
+       id="path3806-9"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="cc"
+       inkscape:export-filename="/home/maxime/projets/audiofingerprint/rapport/images/exemple_cles_not.png"
+       inkscape:export-xdpi="209"
+       inkscape:export-ydpi="209" />
+    <text
+       xml:space="preserve"
+       style="font-size:65.00091553%;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;baseline-shift:sub;fill:#000000;fill-opacity:1;stroke:none;font-family:Webdings;-inkscape-font-specification:Webdings"
+       x="-244.45692"
+       y="238.17923"
+       id="text3830"
+       sodipodi:linespacing="125%"><tspan
+         sodipodi:role="line"
+         id="tspan3832"
+         x="-244.45692"
+         y="238.17923" /></text>
+    <text
+       xml:space="preserve"
+       style="font-size:40px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Times New Roman;-inkscape-font-specification:Times New Roman"
+       x="297.995"
+       y="694.76813"
+       id="text3834"
+       sodipodi:linespacing="125%"
+       inkscape:export-filename="/home/maxime/projets/audiofingerprint/rapport/images/exemple_cles_not.png"
+       inkscape:export-xdpi="209"
+       inkscape:export-ydpi="209"><tspan
+         sodipodi:role="line"
+         id="tspan3836"
+         x="297.995"
+         y="694.76813"
+         style="font-style:italic;-inkscape-font-specification:'Times New Roman, Italic'">t<tspan
+   style="font-size:65.00091553%;font-style:italic;baseline-shift:sub;-inkscape-font-specification:'Times New Roman, Italic'"
+   id="tspan3838">1</tspan></tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:40px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Times New Roman;-inkscape-font-specification:Times New Roman"
+       x="381.15485"
+       y="693.94678"
+       id="text3834-8"
+       sodipodi:linespacing="125%"
+       inkscape:export-filename="/home/maxime/projets/audiofingerprint/rapport/images/exemple_cles_not.png"
+       inkscape:export-xdpi="209"
+       inkscape:export-ydpi="209"><tspan
+         sodipodi:role="line"
+         id="tspan3836-6"
+         x="381.15485"
+         y="693.94678"
+         style="font-style:italic;-inkscape-font-specification:'Times New Roman, Italic'">t<tspan
+   style="font-size:65%;baseline-shift:sub"
+   id="tspan3864">2</tspan></tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:40px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Times New Roman;-inkscape-font-specification:Times New Roman"
+       x="13.459301"
+       y="443.42889"
+       id="text3834-6"
+       sodipodi:linespacing="125%"
+       inkscape:export-filename="/home/maxime/projets/audiofingerprint/rapport/images/exemple_cles_not.png"
+       inkscape:export-xdpi="209"
+       inkscape:export-ydpi="209"><tspan
+         sodipodi:role="line"
+         id="tspan3836-3"
+         x="13.459301"
+         y="443.42889"
+         style="font-style:italic;-inkscape-font-specification:'Times New Roman, Italic'">f<tspan
+   style="font-size:65.00091553%;font-style:italic;baseline-shift:sub;-inkscape-font-specification:'Times New Roman, Italic'"
+   id="tspan3838-7">1</tspan></tspan></text>
+    <path
+       style="fill:none;stroke:#000000;stroke-width:1.70000005;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:1.70000005, 1.70000005;stroke-dashoffset:0"
+       d="m 303.04576,464.4534 -261.629511,0"
+       id="path3806-0"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="cc"
+       inkscape:export-filename="/home/maxime/projets/audiofingerprint/rapport/images/exemple_cles_not.png"
+       inkscape:export-xdpi="209"
+       inkscape:export-ydpi="209" />
+    <path
+       style="fill:none;stroke:#000000;stroke-width:1.70000005;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:1.70000005, 1.70000005;stroke-dashoffset:0"
+       d="m 305.57115,490.71737 -265.670123,0"
+       id="path3806-0-2"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="cc"
+       inkscape:export-filename="/home/maxime/projets/audiofingerprint/rapport/images/exemple_cles_not.png"
+       inkscape:export-xdpi="209"
+       inkscape:export-ydpi="209" />
+    <text
+       xml:space="preserve"
+       style="font-size:40px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Times New Roman;-inkscape-font-specification:Times New Roman"
+       x="13.725328"
+       y="491.19629"
+       id="text3834-6-0"
+       sodipodi:linespacing="125%"
+       inkscape:export-filename="/home/maxime/projets/audiofingerprint/rapport/images/exemple_cles_not.png"
+       inkscape:export-xdpi="209"
+       inkscape:export-ydpi="209"><tspan
+         sodipodi:role="line"
+         id="tspan3836-3-2"
+         x="13.725328"
+         y="491.19629"
+         style="font-style:italic;-inkscape-font-specification:'Times New Roman, Italic'">f<tspan
+   style="font-size:65.00091553%;font-style:italic;baseline-shift:sub;-inkscape-font-specification:'Times New Roman, Italic'"
+   id="tspan3838-7-9">2</tspan></tspan></text>
+  </g>
+</svg>

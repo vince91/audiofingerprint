@@ -26,6 +26,7 @@
 
 
 \graphicspath{ {./images/} }
+\DeclareMathOperator*{\argmin}{arg\,min}
 
 \begin{document}
 
@@ -40,7 +41,7 @@ audio pouvant servir d'identifiant unique. Le critère d'identifiabilté est en gé
 l'oreille humaine, \emph{ie} deux signaux considérés comme identiques à l'écoute doivent avoir une
 empreinte acoustique similaire. Par conséquent le système de construction d'empreinte doit être
 robuste aux petites déformations qui n'altèrent pas l'identifiabilité du signal. Déformation telles
-que l'ajout de bruit, la réverbération, la distortion...
+que l'ajout de bruit, la réverbération, la distortion\dots
 
 De plus, un système efficace sera aussi robuste aux décalage temporels, c'est à dire qu'il sera
 capable d'identifier un extrait de signal, même si celui si n'est pas aligné temporelement avec le
@@ -67,7 +68,88 @@ Le code est accessible à l'adresse suivante :
 
 \section{Principe de base}
 
-On défini une collection
+\subsection{Recherche du plus proche voisin}
+On défini une collection $\chi = \{x_1,x_2,\dots,x_L\}$ de $L$ signaux audios et un requête $q$ (un
+nouvel extrait appartenant ou non à la base). On cherche alors l'élément de $\chi$ le plus proche de
+$q$, c'est à dire son \emph{plus proche voisin}. Le problème revient alors à déterminer une mesure
+de \emph{proximité} $d(x,y)$ entre deux signaux $x$ et $y$ tel que l'expression suivante donne le
+\emph{plus proche voisin} de $q$ : \[ \argmin_{x \in \chi} d(x,q) \]
+
+Bien entendu, le calcul de la mesure de proximité doit être le moins complexe possible. Impossible
+donc d'effecture $L$ comparaison entre $q$ et les éléments de la collection. D'autant plus qu'en
+pratique $q$ ne sera qu'un extrait du signal audio correspondant.
+
+
+\subsection{Indexation}
+
+\subsubsection{Descripteurs locaux}
+L'idée derrière les deux algorithmes que nous présentons ici est d'utiliser des descripteurs locaux
+pour la création de l'empreinte acoustique d'un signal. Ces descripteurs séléctionnent une partie de
+l'information temporel et fréquentielle censé être caractéristique du signal donné.
+
+On utilise ainsi ces descripteurs pour les signaux de référence et la requête. La fusion des
+résultats de recherche des descripteurs de la requête nous permet alors de retrouver le signal ayant
+le plus de similitudes mais  aussi le décalage de la requête avec celui-ci
+
+\subsubsection{Table de hachage}
+Pour pouvoir effectuer une comparaison efficace des descripteurs, il faut utiliser un méthode
+d'indexation rapide. L'un des modèles les plus performants est celui de la table de hachage
+
+Un table de hachage se base sur un fonctionnement par paire clé-valeur et sur une fonction de
+hachage. Soit une paire clé-valeur $(c,v)$ dans un espace $\cal{C} \times \mathbb{V}$, une fonction
+de hachage $h \,: \,\cal{C} \rightarrow \mathbb{H}$ associe à chaque clé un indice de localisation
+dans la table. La localisation de la paire $(c,v)$ est alors déterminée par la valeur de $h(c)$ : il
+n'est pas nécessaire de parcourir toute la table.
+
+Dans les deux cas nous utiliserons alors ce système de table de hachage pour nos descripteurs
+locaux. Chaque paire clé-valeur de la table sera construite comme le montre la figure~\ref{fig:ex_cles} : on sélectionne deux valeurs
+temps-fréquence $(f_1,t_1)\, (f_2,t_2)$ par une méthode propre à chaque système, la clé est alors le
+triplet \[ c = (f_1,f_2,\delta_t = t_1 - t_2)\]
+La valeur enregistrée est le duet $(t_1,k)$ où $k \in [0,\dots,L-1]$ est l'indice du signal de référence.
+
+\begin{figure}[htbp]
+	\center
+	\includegraphics[width=.7\textwidth]{exemple_cles_not}
+	\caption{Construction des clés}
+	\label{fig:ex_cles}
+\end{figure}
+
+Lors de la construction de la table, il est normal qu'une clé apparaisse plusieurs fois dans
+différents signaux, voir dans le même signal. On stocke cependant bien chaque valeur associée à une
+même clé.
+
+
+\subsection{Recherche}
+
+Pour effecuter une recherche de similarité pour une requêt $q$, on va calculer des descripteurs
+locaux de la même manière que pour l'apprentissage de la base. Chaque clé $c_j$ calculée fait alors
+l'objet d'une recherche dans la base et renvoie donc les couples $(t_j^l,k_j^l)$ associés à cette clé,
+si celle ci existe. Connaissant le temps d'apparition $t_j$ de la clé, on peut en déduire le
+décalage temporel de cette clé avec chaque occurence : $\tau_j^l =t_j^l - t_j$. Pour éviter d'être
+trop précis quant au décalage, on quantifiera souvent $\tau_j^l$ par une valeur assez importante.
+
+On pourrait alors établir le décompte du nombre de clé en commun entre la requête et chaque signal,
+mais on traiterait alors chaque descripteur local indépendamment les uns des autres. Il est donc
+plus intéressant de prendre en compte le décalage temporel.
+
+On construit alors les histogrammes $\mathbf{H}_k(\tau) \, : \, \mathbb{Z} \rightarrow \mathbb{N}$
+qui contienent pour chaque indice $k \in [0,\dots,L-1]$ le nombre de clés ayant un décalage $\tau$
+comme montré en figure~\ref{fig:ex_hist}.
+
+
+\begin{figure}[htbp]
+	\center
+	\includegraphics[width=.7\textwidth]{hist}
+	\caption{Exemples d'histogrammes}
+	\label{fig:ex_hist}
+\end{figure}
+
+Le \emph{plus proche voisin} est donc donné par :
+\[
+	k_q,\tau_q = \argmin_{k \in [0,\dots,L], \tau \in \mathbb{Z}} \mathbf{H}_k(\tau)
+\]
+où $\tau_q$ est le décalage de l'extrait avec son \emph{plus proche voisin}.
+
 
 
 \section{Méthode Shazam}
