@@ -1,6 +1,7 @@
 import numpy as np
 from hashlib import sha1
 from db import Database
+from sqlite3 import Binary
 
 
 
@@ -159,18 +160,17 @@ class MatchingPursuit:
                 
 
 
-    def match(self,s):
+    def match(self,s,db):
 
         y = self.sparse(s)
         # keys for the signal
         keys = self.extractKeys(y)
-        db = Database()
         
         offsets = {}
         # Quantiztion factor for the offsets
         qt = max(self.dictionary.sizes)/2
         for hash_key,offset in keys:
-            result = db.selectFingerprints(hash_key)
+            result = db.selectFingerprints(Binary(hash_key)[0:5])
             for r in result:
                 if not r[0] in offsets:
                     offsets[r[0]] = []

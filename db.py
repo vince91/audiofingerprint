@@ -43,7 +43,7 @@ class Database:
 	def selectFingerprints(self, hash, type = 'mp'):
 		"""
 		"""
-		self.cursor.execute("SELECT track_id, offset FROM fingerprints_%s INDEXED BY id_%s WHERE hash=?" % (type, type), (sqlite3.Binary(hash),))
+		self.cursor.execute("SELECT track_id, offset FROM fingerprints INDEXED BY id WHERE hash=?" , (sqlite3.Binary(hash),))
 		return self.cursor.fetchall()
 
 	def getTrackNumber(self):
