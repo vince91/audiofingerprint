@@ -2,8 +2,8 @@ import sqlite3
 
 class Database:
 
-	def __init__(self):
-		self.connection = sqlite3.connect('database.sqlite')
+	def __init__(self, filename):
+		self.connection = sqlite3.connect(filename)
 		self.connection.text_factory = str
 		self.cursor = self.connection.cursor()
 

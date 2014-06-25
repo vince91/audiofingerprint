@@ -12,7 +12,7 @@ music_list = []
 if os.path.isfile(current_dir + "/database.sqlite"):
 	os.remove(current_dir + "/database.sqlite")
 
-database = Database()
+database = Database('database.sqlite')
 database.create()
 
 for file in os.listdir(music_dir):

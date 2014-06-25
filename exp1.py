@@ -17,7 +17,7 @@ database.append(Database('database5.sqlite'))
 
 # Music library
 current_dir = os.path.dirname(os.path.abspath(__file__))
-music_dir = current_dir + "/music"
+music_dir = current_dir + "/music_modif1"
 music_list = []
 for file in os.listdir(music_dir):
 	if file.endswith(".mp3"):
@@ -25,7 +25,7 @@ for file in os.listdir(music_dir):
 
 shaz = Shazam(100)
 
-duration = 0.2
+duration = 2
 
 # pour chaque musique de la bdd on prend 3 extraits
 extracts_k = [1./4, 2./4, 3./4]

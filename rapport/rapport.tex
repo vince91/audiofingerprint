@@ -206,6 +206,7 @@ Nous obtenons finalement une liste de clés pour chaque trame.
 \subsection{Construction de la base de données}
 
 Pour chaque musique de notre bibliothèque musicale (100 musiques), nous appliquons les méthodes précédentes et extrayons les clés, que nous enregistrons dans la base de données. Le processus est répété 5 fois, tout en faisant varier le seuil d (seuil de distance admissible entre les pics). Nous obtenons pour la méthode Shazam 5 base de données distinctes :
+\vspace{0.4cm}
 
 \begin{tabular}{|c|c|c|}
 \hline
@@ -222,15 +223,44 @@ Pour chaque musique de notre bibliothèque musicale (100 musiques), nous appliquo
    5 & 100,2 & 102,8  \\
 \hline
 \end{tabular}
+\vspace{0.4cm}
 
-La construction de la base de données pour 100 musique (et pour une durée totale de 8,1 heures de musique) prend entre 12 et 15 minutes.
+La construction d'une base de données pour 100 musique (et pour une durée totale de 8,1 heures de musique) prend entre 12 et 15 minutes.
 
-%\emph{italique}
-%\textbf{gras}
-%\begin{itemize}
-%	\item élément 1
-%	\item élément 2
-%\end{itemize}
+\subsection{Efficacité de la méthode Shazam}
+
+La première expérimentation consiste à prendre 3 extraits de durée variable  pour chaque musique de notre bibliothèque musicale et de les tester sur chaque base de données.
+
+\begin{figure}[htbp]
+    \center
+    \includegraphics[width=13cm]{shazam4.png}
+    \caption{Expérimentation de la méthode Shazam sur des extraits non modifiés}
+    \label{test1shaz}
+\end{figure}
+
+On remarque (\ref{test1shaz}) que notre implémentation assure un taux de reconnaissance musicale supérieure à 99\% lorsque les extraits sont d'une durée supérieure à 2 secondes. Ce taux est de 100\% pour des extraits de 5 secondes. Les performances entre les différentes bases de données se valent, mais il est évident que plus le nombre de clés par seconde est grand, plus le taux de reconnaissance le sera aussi.
+\vspace{0.4cm}
+
+Pour la deuxième expérimentation la bibliothèque musicale est modifiée de la façon suivante : on ajoute à chaque musique du bruit blanc ($\sigma^2=0.005$), de la réverberation et un applique un passe-haut (fréquence de coupure : 500 Hz) de façon à obtenir un effet microphone. Ces modifications sont réalisées avec l'outil en ligne de commande SoX : 
+
+\texttt{sox input\_file.wav ouput\_file.wav highpass 500 reverb whitenoise vol 0.005}
+
+Nous effectuons ensuite des tests identifques à la première expérimentation mais sur la bibliothèque modifiée.
+
+\begin{figure}[htbp]
+    \center
+    \includegraphics[width=13cm]{shazam5.png}
+    \caption{Expérimentation de la méthode Shazam sur des extraits modifiés}
+    \label{test2shaz}
+\end{figure}
+
+Cette fois-ci (\ref{test2shaz}), on assure un taux de reconnaissance de 100\% lorsque les extraits sont d'une durée supérieur à 10 secondes (sauf pour la base de donnée n°1).
+\vspace{0.4cm}
+
+De ces deux expérimentations nous pouvons choisir un nombre de clés par seconde satisfaisant pour la construction de la base de données. La base de données n°1 (22,6 clés/seconde) est exclue, car on remarque que sa courbe de taux de reconnaissance se démarque trop des autres. Les autres bases ont des performances semblables, et comme le poids de la base de données est important (il faut imaginer une application réelle avec une bibliothèque musicale comportant des millions de titres), on choisit la base la plus légère : la base n°2 (39,6 clés/seconde).
+\vspace{0.4cm}
+
+En conclusion, le valeur de \textbf{40 clés par seconde} semble être un bon compromis pour la construction d'une base de donnée avec la méthode Shazam
 
 
 \end{document}

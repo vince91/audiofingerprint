@@ -11,10 +11,15 @@ class Shazam:
 		self.min_real = 0.0000000001
 		self.max_distance = max_distance
 
-	def processTrack(self, wavdata):
+	def processTrack(self, wavdata, forced_lenght = -1):
 
 		fs = wavdata.getframerate()
-		track_size = wavdata.getnframes()
+
+		if forced_lenght == -1:
+			track_size = wavdata.getnframes()
+		else:
+			track_size = forced_lenght
+
 		frame_size = fs * self.frame_duration
 		frame_number = int(track_size / frame_size)
 		total_pairs = []
@@ -38,7 +43,6 @@ class Shazam:
 				total_pairs.append((f1, f2, delta_t, offset))
 
 		return total_pairs
-
 
 	def spectrogram(self, x):
 
