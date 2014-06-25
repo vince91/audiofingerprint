@@ -66,4 +66,7 @@ for track in music_list:
         print('\n')
 
 print(counter,i)
+f = open('result-'+str(apf),'w')
+f.write(str(counter))
+f.close()
 
