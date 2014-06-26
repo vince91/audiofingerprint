@@ -1,0 +1,52 @@
+\makeatletter
+\def\thickhrulefill{\leavevmode \leaders \hrule height 1pt\hfill \kern \z@}
+\renewcommand{\maketitle}{\begin{titlepage}%
+    \let\footnotesize\small
+    \let\footnoterule\relax
+    \parindent \z@
+    \reset@font
+    \null
+    \vskip 10\p@
+    \begin{center}
+      \LARGE \bsc{Télécom Paristech}
+      \vskip 30\p@
+      \hrule height 1pt
+      \vskip 1pt 
+      \hrule
+      \vskip 3pt
+      {\huge \bfseries \strut \@title \strut}\par
+      \vskip 1pt
+      \hrule
+      \vskip 1pt
+      \hrule height 1pt
+
+      \vskip 20\p@
+      \begin{minipage}{.45\textwidth}
+      \begin{flushleft}
+	      \footnotesize
+	      Maxime \bsc{Sirbu}\\
+	      \texttt{maxime.sirbu@telecom-paristech.fr}\\
+      \end{flushleft}
+      \end{minipage}
+      \begin{minipage}{.45\textwidth}
+      \begin{flushright}
+	      \footnotesize
+	      Vincent \bsc{Timofti}\\
+	      \texttt{vincent.timofti@telecom-paristech.fr}\\
+      \end{flushright}
+      \end{minipage}
+      \vskip 30\p@
+      \small Encadré par:\\
+      Gaël \bsc{Richard}
+      \vskip 50\p@
+      \includegraphics[width=.3\textwidth]{Logo-TPT}
+      \vfill
+      \@date
+    \end{center}
+    \vskip 50\p@
+    \vfil
+    \null
+  \end{titlepage}%
+  \setcounter{footnote}{0}%
+}
+\makeatother
