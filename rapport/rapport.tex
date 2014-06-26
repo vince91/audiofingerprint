@@ -275,9 +275,16 @@ De ces deux expérimentations nous pouvons choisir un nombre de clés par seconde 
 \vspace{0.4cm}
 
 En conclusion, le valeur de \textbf{40 clés par seconde} semble être un bon compromis pour la construction d'une base de donnée avec la méthode Shazam
+\vspace{0.4cm}
 
+La dernière expérimentation consiste à tester la robustesse de la méthode Shazam face au bruit. Pour chaque musique de la bibliothèque musicale, on extrait 10 seconde auxquelles on ajoute un bruit blanc en faisant varier $\sigma$. Ces extraits sont testés sur la base de données n°2.
 
-
+\begin{figure}[htbp]
+    \center
+    \includegraphics[width=13cm]{shazam6.png}
+    \caption{Robustesse de la méthode Shazam face au bruit blanc}
+    \label{test3shaz}
+\end{figure}
 
 
 \section{Méthode \emph{Matching Pursuit}}
