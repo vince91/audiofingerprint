@@ -53,14 +53,14 @@ L'empreinte acoustique -- ou \emph{audio fingerprint} -- désigne une représentat
 audio pouvant servir d'identifiant unique. Le critère d'identifiabilté est en général celui de
 l'oreille humaine, \emph{ie} deux signaux considérés comme identiques à l'écoute doivent avoir une
 empreinte acoustique similaire. Par conséquent le système de construction d'empreinte doit être
-robuste aux petites déformations qui n'altèrent pas l'identifiabilité du signal. Déformation telles
+robuste aux petites déformations qui n'altèrent pas l'identifiabilité du signal. Déformations telles
 que l'ajout de bruit, la réverbération, la distortion\dots
 
 De plus, un système efficace sera aussi robuste aux décalage temporels, c'est à dire qu'il sera
-capable d'identifier un extrait de signal, même si celui si n'est pas aligné temporelement avec le
+capable d'identifier un extrait de signal, même si celui si n'est pas aligné temporellement avec le
 signal utilisé pour l'apprentissage de l'empreinte.
 
-Le sytème d'identification par empreinte doit aussi être rapide et capable d'identifier un extrait
+Le système d'identification par empreinte doit aussi être rapide et capable d'identifier un extrait
 parmi un très grand nombre de signaux. Ceci pose deux contraintes majeures pour notre système :
 \begin{itemize}
 	\item La base de donnée contenant les empreintes ne doit pas être de taille trop importante.
@@ -83,14 +83,14 @@ Le code est accessible à l'adresse suivante :
 \label{sec:principe_base}
 
 \subsection{Recherche du plus proche voisin}
-On défini une collection $\chi = \{x_1,x_2,\dots,x_L\}$ de $L$ signaux audios et un requête $q$ (un
+On défini une collection $\chi = \{x_1,x_2,\dots,x_L\}$ de $L$ signaux audios et une requête $q$ (un
 nouvel extrait appartenant ou non à la base). On cherche alors l'élément de $\chi$ le plus proche de
 $q$, c'est à dire son \emph{plus proche voisin}. Le problème revient alors à déterminer une mesure
 de \emph{proximité} $d(x,y)$ entre deux signaux $x$ et $y$ tel que l'expression suivante donne le
 \emph{plus proche voisin} de $q$ : \[ \argmin_{x \in \chi} d(x,q) \]
 
 Bien entendu, le calcul de la mesure de proximité doit être le moins complexe possible. Impossible
-donc d'effecture $L$ comparaison entre $q$ et les éléments de la collection. D'autant plus qu'en
+donc d'effectuer $L$ comparaison entre $q$ et les éléments de la collection. D'autant plus qu'en
 pratique $q$ ne sera qu'un extrait du signal audio correspondant.
 
 
@@ -98,8 +98,8 @@ pratique $q$ ne sera qu'un extrait du signal audio correspondant.
 
 \subsubsection{Descripteurs locaux}
 L'idée derrière les deux algorithmes que nous présentons ici est d'utiliser des descripteurs locaux
-pour la création de l'empreinte acoustique d'un signal. Ces descripteurs séléctionnent une partie de
-l'information temporel et fréquentielle censé être caractéristique du signal donné.
+pour la création de l'empreinte acoustique d'un signal. Ces descripteurs sélectionnent une partie de
+l'information temporel et fréquentielle censée être caractéristique du signal donné.
 
 On utilise ainsi ces descripteurs pour les signaux de référence et la requête. La fusion des
 résultats de recherche des descripteurs de la requête nous permet alors de retrouver le signal ayant
@@ -137,11 +137,11 @@ même clé.
 \subsection{Recherche}
 \label{sec:recherche_hist}
 
-Pour effecuter une recherche de similarité pour une requêt $q$, on va calculer des descripteurs
+Pour effectuer une recherche de similarité pour une requête $q$, on va calculer des descripteurs
 locaux de la même manière que pour l'apprentissage de la base. Chaque clé $c_j$ calculée fait alors
 l'objet d'une recherche dans la base et renvoie donc les couples $(t_j^l,k_j^l)$ associés à cette clé,
 si celle ci existe. Connaissant le temps d'apparition $t_j$ de la clé, on peut en déduire le
-décalage temporel de cette clé avec chaque occurence : $\tau_j^l =t_j^l - t_j$. Pour éviter d'être
+décalage temporel de cette clé avec chaque occurrence : $\tau_j^l =t_j^l - t_j$. Pour éviter d'être
 trop précis quant au décalage, on quantifiera souvent $\tau_j^l$ par une valeur assez importante.
 
 On pourrait alors établir le décompte du nombre de clé en commun entre la requête et chaque signal,
@@ -149,7 +149,7 @@ mais on traiterait alors chaque descripteur local indépendamment les uns des aut
 plus intéressant de prendre en compte le décalage temporel.
 
 On construit alors les histogrammes $\mathbf{H}_k(\tau) \, : \, \mathbb{Z} \rightarrow \mathbb{N}$
-qui contienent pour chaque indice $k \in [0,\dots,L-1]$ le nombre de clés ayant un décalage $\tau$
+qui contiennent pour chaque indice $k \in [0,\dots,L-1]$ le nombre de clés ayant un décalage $\tau$
 comme montré en figure~\ref{fig:ex_hist}.
 
 
@@ -182,7 +182,7 @@ Le signal audio duquel nous devons extraire l'empreinte acoustique est tout d'ab
 
 \subsection{Extraction de pics d'intensité}
 
-Le spectrogramme est découpé selon un quadrillage 10x10. Dans chaque case du quadrillage nous extrayons le point d'intensité maximale, qui définira un pic. Nous avons donc 100 pics d'itensité par trame de 5 secondes. Un pic est défini par sa position (sa fréquence et l'instant à laquel il apparaît) :
+Le spectrogramme est découpé selon un quadrillage 10x10. Dans chaque case du quadrillage nous extrayons le point d'intensité maximale, qui définira un pic. Nous avons donc 100 pics d'intensité par trame de 5 secondes. Un pic est défini par sa position (sa fréquence et l'instant à laquelle il apparaît) :
 
 \begin{equation}
 	p_i = (f_i, t_i)
@@ -205,10 +205,10 @@ Nous créons des couples à partir des pics d'intensité. Un couple constitue une c
 \end{split} 
 \end{equation}
 
-Pour constituer un couple les pics précedents doivent satisfaire 2 conditions :
+Pour constituer un couple les pics précédents doivent satisfaire 2 conditions :
 \begin{itemize}
 	\item $ t_2 > t_1 $
-	\item la distance euclidiènne entre les 2 pics doit être inférieur à un certain seuil d (le nombre de clé que l'on prendra pour une trame dépendra de ce seuil)
+	\item la distance euclidienne entre les 2 pics doit être inférieur à un certain seuil d (le nombre de clé que l'on prendra pour une trame dépendra de ce seuil)
 \end{itemize}
 
 Nous obtenons finalement une liste de clés pour chaque trame.
@@ -229,7 +229,7 @@ information sur les tailles des atomes qui sont ici nos descripteurs locaux, en 
 l'information fréquentielle et temporelle.
 
 \subsection{Formulation mathématiques}
-Soit un espace de Hilbert $\mathcal H$, un dicionnaire d'éléments $d_\gamma \in \mathcal H$ et un
+Soit un espace de Hilbert $\mathcal H$, un dictionnaire d'éléments $d_\gamma \in \mathcal H$ et un
 élément $x \in \mathcal H$, l'algorithme \bsc{mp} va construire une approximation de $x$ : $\tilde x_n =
 \sum_{i=1}^{n}\alpha_i d_{\gamma^i}$ après $n$ itérations.
 
@@ -237,7 +237,7 @@ L'algorithme est un algorithme itératif en deux étapes. Initialement on défini l
 $R^0x = x$, l'ensemble des éléments du dictionnaire sélectionnés $\Gamma^0 = \emptyset$. Lors de la
 $n^{\text{ième}}$ itération, on procède alors comme suivant :
 \begin{itemize}
-	\item Sélection : on sélectionne un élement du dictionnaire $d_{\gamma^n}$ selon un critère
+	\item Sélection : on sélectionne un élément du dictionnaire $d_{\gamma^n}$ selon un critère
 		de $\mathcal C$.
 	\item Mise à jour : on met à jour l'approximation selon une règle $\mathcal A$ et on recalcule
 		le résiduel.
@@ -255,7 +255,7 @@ La figure~\ref{fig:mp} décrit le fonctionnement de cet algorithme.
 
 Pour notre implémentation, nous choisissons un dictionnaire redondant constitué d'une union de
 bases \bsc{mdct} (\emph{Modified Discrete Cosine Transform}). La \bsc{mdct} est une transformée
-basée sur la tranfromée en consinys discrete.
+basée sur la transformée en consinus discrete.
 
 Pour un vecteur $x$ de taille $N=PK$ (\emph{ie} $x$ est composé de $P$ segments de taille $K$). La
 \bsc{mdct} de taille $L = 2K$ s'écrit comme une matrice de transformation $\mathbf{T}$ de taille $N
@@ -284,7 +284,7 @@ on peut alors montrer que cette condition est vérifiée lorsque le fenêtre vérifi
 \end{align}
 
 Les conditions~\ref{eq:win_1} et~\ref{eq:win_3} assurent la conservation aux bords du signal.
-La fenêtre que nous utilisons pour le mathcalcul de \bsc{mdct} est définie par :
+La fenêtre que nous utilisons pour le calcul de \bsc{mdct} est définie par :
 \[
 	w[u] = \sin\left[\frac\pi L \left( u + \frac 12 \right)\right]
 \]
@@ -297,7 +297,7 @@ Notre dictionnaire est donc constitué d'atomes similaires à la figure~\ref{fig:a
 	\caption{Atome d'une union de base \bsc{mdct}}
 	\label{fig:atom}
 \end{figure}
-En utilisant un dicitonnaire d'union de bases \bsc{mdct} avec différentes tailles de fênetres, on
+En utilisant un dictionnaire d'union de bases \bsc{mdct} avec différentes tailles de fenêtres, on
 peut alors utiliser des atomes de tailles différentes pour être plus précis dans notre algorithme
 \bsc{mp}.
 
@@ -327,13 +327,13 @@ Afin de réduire la complexité de l'algorithme \bsc{mp} et d'augmenter son effica
 effectuer de légères modification dans le déroulement de l'algorithme.
 
 \subsubsection{Sélection}
-À chaque itération, il est nécessaire de calculer la tranformée \bsc{mdct} du résiduel lors de
+À chaque itération, il est nécessaire de calculer la transformée \bsc{mdct} du résiduel lors de
 l'étape de sélection. Ceci peut devenir coûteux en temps de calcul si l'on a un grand nombre
 d'itérations.
 
-Cependant il n'est pas nécessaire de calculer la tranformée pour tout le signal, en effet seul la
+Cependant il n'est pas nécessaire de calculer la transformée pour tout le signal, en effet seul la
 partie temporel correspondant à l'atome sélectionné est affectée par la mise à jour. Il n'est donc
-pas nécessaire de recalculer la transformée correspondant aux atomes qui ne sont pas correlés avec
+pas nécessaire de recalculer la transformée correspondant aux atomes qui ne sont pas corrélés avec
 l'atome sélectionné.
 
 On modifie donc la fonction de calcul de \bsc{mdct}, pour ne mettre à jour que la partie du signal
@@ -341,10 +341,10 @@ où les atomes pourrait être affecté par le changement de résiduel.
 
 
 \subsubsection{Masque}
-L'algorithme \bsc{mp} à tendance à sélectionner les atomes la où il y a beacoup d'énergie, ils sont
+L'algorithme \bsc{mp} à tendance à sélectionner les atomes la où il y a beaucoup d'énergie, ils sont
 donc en général proches fréquentiellement et temporellement.
 
-L'idée est donc de changement le critère de sélection en utilsant un masque :
+L'idée est donc de changement le critère de sélection en utilisant un masque :
 \[
 	\mathcal{C_M}(R^nx,\mathcal D) = \argmax_{d_i \in \mathcal D}(|\langle
 	R^nx,d_i \rangle|\mathcal M(d_i|\Gamma^n))
@@ -372,12 +372,12 @@ par~\ref{eq:mask1}.
 \subsection{Construction des clés}
 \label{sec:mp_cles}
 
-Dans cette deuxième méthode nous utilsons donc l'algorithme \emph{Matching Pursuit} pour construire
+Dans cette deuxième méthode nous utilisons donc l'algorithme \emph{Matching Pursuit} pour construire
 nos clés.  On découpe notre signal d'entrée en trames de 5 secondes, puis on extrait les un nombre
 $n$ d'atomes en utilisant l'algorithme \bsc{mp} avec un dictionnaire composé de trois tailles
-d'atome différentes (128,1024 et 8192 échantillons).  On va ensuite apairer chaque atomes avec $p$
+d'atome différentes (128,1024 et 8192 échantillons).  On va ensuite appairer chaque atomes avec $p$
 de ses plus proches voisins dans le plan temps-fréquence, en ne considérant que ceux
-apparaisant après l'atome choisi. La figure \label{fig:mp_pairs} montre un exemple d'apairage avec
+apparaissant après l'atome choisi. La figure \label{fig:mp_pairs} montre un exemple d'appairage avec
 $p=1$.
 \begin{figure}[htbp]
 	\centering
@@ -404,7 +404,7 @@ commun aux deux méthodes.
 Afin de tester les deux méthodes, nous utilisons un base d'apprentissage de 100 morceaux de quelques
 minutes. Ces morceaux sont ensuite utilisés pour construire les bases de donnée pour chaque méthode.
 Les bases sont construite grâce au système de gestion de base de donnée SQLite. Les clés sont
-caclulées sur 40 bits grâce à fonction de hachage \bsc{sha}-1 (on conserve les 40 premiers bits sur
+calculées sur 40 bits grâce à fonction de hachage \bsc{sha}-1 (on conserve les 40 premiers bits sur
 les 160 donnés par \bsc{sha}-1.
 
 \subsection{Méthode par spectrogramme}
@@ -449,11 +449,11 @@ On remarque (\ref{test1shaz}) que notre implémentation assure un taux de reconna
 \vspace{0.4cm}
 
 \label{sec:base_modif}
-Pour la deuxième expérimentation la bibliothèque musicale est modifiée de la façon suivante : on ajoute à chaque musique du bruit blanc ($\sigma^2=0.005$), de la réverberation et un applique un passe-haut (fréquence de coupure : 500 Hz) de façon à obtenir un effet microphone. Ces modifications sont réalisées avec l'outil en ligne de commande SoX : 
+Pour la deuxième expérimentation la bibliothèque musicale est modifiée de la façon suivante : on ajoute à chaque musique du bruit blanc ($\sigma^2=0.005$), de la réverbération et un applique un passe-haut (fréquence de coupure : 500 Hz) de façon à obtenir un effet microphone. Ces modifications sont réalisées avec l'outil en ligne de commande SoX : 
 
 \texttt{sox input\_file.wav ouput\_file.wav highpass 500 reverb whitenoise vol 0.005}
 
-Nous effectuons ensuite des tests identifques à la première expérimentation mais sur la bibliothèque modifiée.
+Nous effectuons ensuite des tests identiques à la première expérimentation mais sur la bibliothèque modifiée.
 
 \begin{figure}[htbp]
     \center
@@ -489,7 +489,7 @@ La dernière expérimentation consiste à tester la robustesse de la méthode Shazam
 Pour tester l'efficacité de la méthode basée sur l'algorithme \emph{Matching Pursuit} nous
 construisons 12 bases différentes en suivant le protocole suivant:
 \begin{itemize}
-	\item Les morceaux sont découpés en trames de 5 secondes avec lequels on construit les
+	\item Les morceaux sont découpés en trames de 5 secondes avec lesquels on construit les
 		clés comme décrit en section~\ref{sec:mp_cles}.
 	\item Chaque base extrait un nombre d'atome différent $n$ pour la construction des clés.
 	\item Pour chaque atomes on construit au maximum 3 paires différentes, on a donc environ
@@ -576,7 +576,7 @@ pour plusieurs dizaines de secondes).
 \subsubsection{Resistance au bruit}
 
 Les conditions normales d'écoute imposent souvent de nombreuses modifications (bruit,distortions,
-modifications du spectre,réverberation,\ldots).
+modifications du spectre,réverbération,\ldots).
 Nous nous proposons ici de tester la résistance au bruit avec le protocole suivant:
 \begin{itemize}
 	\item On utilise la base construite avec 25 atomes par trame de 5 secondes.
@@ -603,7 +603,7 @@ le taux de reconnaissance reste à peu près constant dans cette tranche.
 Comme décrit dans la section~\ref{sec:base_modif}, nous avons construit une autre base de musique en
 modifiant la base originale. Ces signaux sont censés imiter l'impression auditive lorsqu'on écoute
 les morceaux grâce à des haut-parleurs de qualité moyenne. On obtient alors un taux de
-reconnaissance de 72.5\% en utilsant le même protocole que précédement.
+reconnaissance de 72.5\% en utilisant le même protocole que précédemment.
 
 \nocite{*}
 \bibliographystyle{plain}
