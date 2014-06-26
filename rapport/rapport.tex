@@ -132,6 +132,7 @@ même clé.
 
 
 \subsection{Recherche}
+\label{sec:recherche_hist}
 
 Pour effecuter une recherche de similarité pour une requêt $q$, on va calculer des descripteurs
 locaux de la même manière que pour l'apprentissage de la base. Chaque clé $c_j$ calculée fait alors
@@ -158,7 +159,7 @@ comme montré en figure~\ref{fig:ex_hist}.
 
 Le \emph{plus proche voisin} est donc donné par :
 \[
-	k_q,\tau_q = \argmax_{k \in [0,\dots,L], \tau \in \mathbb{Z}} \mathbf{H}_k(\tau)
+	k_q,\tau_q = \argmax_{k \in [0,\dots,L-1], \tau \in \mathbb{Z}} \mathbf{H}_k(\tau)
 \]
 où $\tau_q$ est le décalage de l'extrait avec son \emph{plus proche voisin}.
 
@@ -243,6 +244,7 @@ La construction d'une base de données pour 100 musique (et pour une durée totale
 
 \subsection{Efficacité de la méthode Shazam}
 
+\subsubsection{Base d'apprentissage}
 La première expérimentation consiste à prendre 3 extraits de durée variable  pour chaque musique de notre bibliothèque musicale et de les tester sur chaque base de données.
 
 \begin{figure}[htbp]
@@ -255,6 +257,8 @@ La première expérimentation consiste à prendre 3 extraits de durée variable  pou
 On remarque (\ref{test1shaz}) que notre implémentation assure un taux de reconnaissance musicale supérieure à 99\% lorsque les extraits sont d'une durée supérieure à 2 secondes. Ce taux est de 100\% pour des extraits de 5 secondes. Les performances entre les différentes bases de données se valent, mais il est évident que plus le nombre de clés par seconde est grand, plus le taux de reconnaissance le sera aussi.
 \vspace{0.4cm}
 
+\subsubsection{Signaux déteriorés}
+\label{sec:base_modif}
 Pour la deuxième expérimentation la bibliothèque musicale est modifiée de la façon suivante : on ajoute à chaque musique du bruit blanc ($\sigma^2=0.005$), de la réverberation et un applique un passe-haut (fréquence de coupure : 500 Hz) de façon à obtenir un effet microphone. Ces modifications sont réalisées avec l'outil en ligne de commande SoX : 
 
 \texttt{sox input\_file.wav ouput\_file.wav highpass 500 reverb whitenoise vol 0.005}
@@ -360,7 +364,7 @@ Notre dictionnaire est donc constitué d'atomes similaires à la figure~\ref{fig:a
 \begin{figure}[htbp]
 	\centering
 	\includegraphics[width=.3\textwidth]{atom}
-	\caption{Atome d'une union de base mdct}
+	\caption{Atome d'une union de base \bsc{mdct}}
 	\label{fig:atom}
 \end{figure}
 En utilisant un dicitonnaire d'union de bases \bsc{mdct} avec différentes tailles de fênetres, on
@@ -436,6 +440,7 @@ par~\ref{eq:mask1}.
 
 
 \subsection{Construction des clés}
+\label{sec:mp_cles}
 
 Dans cette deuxième méthode nous utilsons donc l'algorithme \emph{Matching Pursuit} pour construire
 nos clés.  On découpe notre signal d'entrée en trames de 5 secondes, puis on extrait les un nombre
@@ -461,9 +466,139 @@ Le reste du processus est le même que le principe de base décrit en section~\ref
 commun aux deux méthodes.
 
 
-\subsection{Performances}
 
 
+
+\section{Performances}
+
+Afin de tester les deux méthodes, nous utilisons un base d'apprentissage de 100 morceaux de quelques
+minutes. Ces morceaux sont ensuite utilisés pour construire les bases de donnée pour chaque méthode.
+Les bases sont construite grâce au système de gestion de base de donnée SQLite. Les clés sont
+caclulées sur 40 bits grâce à fonction de hachage \bsc{sha}-1 (on conserve les 40 premiers bits sur
+les 160 donnés par \bsc{sha}-1.
+
+
+\subsection{Méthode \bsc{mp}}
+
+\subsubsection{Bases de test}
+Pour tester l'efficacité de la méthode basée sur l'algorithme \emph{Matching Pursuit} nous
+construisons 12 bases différentes en suivant le protocole suivant:
+\begin{itemize}
+	\item Les morceaux sont découpés en trames de 5 secondes avec lequels on construit les
+		clés comme décrit en section~\ref{sec:mp_cles}.
+	\item Chaque base extrait un nombre d'atome différent $n$ pour la construction des clés.
+	\item Pour chaque atomes on construit au maximum 3 paires différentes, on a donc environ
+		$3n$ clés par trame de 5 seconde.
+\end{itemize}
+
+On obtient alors les tailles de base de données suivantes :
+\begin{center}
+	\begin{tabular}{|c|c|c|}
+		\hline
+		BDD n° & Nombre d'atomes & Poids (Megaoctets) \\
+		\hline
+		1 & 10 & 5,2 \\
+		\hline
+		2 & 15 & 8,4 \\
+		\hline
+		3 & 20& 11,6 \\
+		\hline
+		4 & 25, & 14,9 \\
+		\hline
+		5 & 30 & 18,1  \\
+		\hline
+		5 & 35 & 21,4  \\
+		\hline
+		5 & 40 & 24,6  \\
+		\hline
+		5 & 50 & 31,1  \\
+		\hline
+		5 & 60 & 37,7  \\
+		\hline
+		5 & 70 & 44,1  \\
+		\hline
+		5 & 80 & 50,7  \\
+		\hline
+		5 & 90 & 57,2  \\
+		\hline
+	\end{tabular}
+\end{center}
+
+\subsubsection{Paramètre optimaux}
+On effectue alors des tests de reconnaissance pour chaque base selon le protocole suivant :
+\begin{itemize}
+	\item Pour chaque chanson, on sélectionne trois extraits différents de 5 secondes.
+	\item On extrait les clés de la même manière que pour la construction en utilisant un nombre
+		d'atome différent à chaque fois.
+	\item On teste la reconnaissance pour chaque base et chaque groupe de clés extraites.
+\end{itemize}
+
+On observe alors les résultats du taux de reconnaissance en figure~\ref{fig:result_mp}.
+\begin{figure}[htbp]
+	\centering
+	\includegraphics[width=.8\textwidth]{result_mp}
+	\caption{Taux de reconnaissance par base et par nombre d'atomes extraits}
+	\label{fig:result_mp}
+\end{figure}
+
+On remarque tout de suite que la méthode par \bsc{mp} est bien efficace que la méthode par
+spectrogramme. On voit aussi qu'un nombre insuffisant d'atomes extraits implique une perte
+d'efficacité, de même qu'un nombre d'atome extraits trop important. En effet si l'on extrait trop
+peu d'atome, la recherche n'est pas discriminante, si on en extrait trop, les même clés indiquent de
+trop nombreuses trame différentes.
+
+Nous avons donc considéré qu'un algorithme \bsc{mp} extrayant une vingtaines d'atomes pour 5 secondes,
+soit environ 12 clés par seconde, donne les meilleurs résultats pour l'apprentissage et la
+recherche.
+
+\subsubsection{Seuil d'indécision}
+Lors de la recherche, il se peut que le maximum trouvé lors de la recherche de l'$\argmax$ des
+histogrammes décrit en section~\ref{sec:recherche_hist} ne soit pas beaucoup plus élevé qu'un autre
+valeur. Pour améliorer la recherche, on met alors un place un seuil d'indécision . Ainsi on définit
+:
+\begin{align*}
+	k_q,\tau_q & = \argmax_{k \in [0\dots L-1], \tau \in \mathbb{Z}} \mathbf{H}_k(\tau)\\
+	m_{k^q}  & = \mathbf{H}_{k^q}{\tau_q}\\
+	p & = \max_{k \in [0\dots L-1]\setminus k_q, \tau \in \mathbb{Z}} \mathbf{H}_k(\tau)\\
+\end{align*}
+Alors si on considère lors de la recherche que l'on a bien un résultat lorsque $\frac{m_{k^q}}{p} >
+1 + \frac 1{\log{m_{k^q}}}$.
+
+Pour la suite, on applique ce seuil, en continuant l'extraction des clés dans les extraits
+suivants tant que l'indecision n'est pas levée (on peut cependant avoir besoin d'extraire les clés
+pour plusieurs dizaines de secondes).
+
+\subsubsection{Resistance au bruit}
+
+Les conditions normales d'écoute imposent souvent de nombreuses modifications (bruit,distortions,
+modifications du spectre,réverberation,\ldots).
+Nous nous proposons ici de tester la résistance au bruit avec le protocole suivant:
+\begin{itemize}
+	\item On utilise la base construite avec 25 atomes par trame de 5 secondes.
+	\item On fait trois recherche par morceaux, avec trois extraits différents.
+	\item On ajoute du bruit blanc gaussien de variance $\sigma^2$ à l'extrait, avec différentes valeurs de $\sigma^2$
+	\item On extrait 10 atomes par trames de 2 secondes et on continue de parcourir les trames
+		tant que l'indécision n'est pas levée, comme décrit ci-dessus (avec un maximum de 20
+		trames lues).
+\end{itemize}
+
+Le résultat de ce protocole est donné par la figure~\ref{fig:mp_bruit}
+\begin{figure}[htbp]
+	\centering
+	\includegraphics[width=.7\textwidth]{mp_bruit}
+	\caption{Taux de reconnaissance de la recherche avec ajout de bruit}
+	\label{fig:mp_bruit}
+\end{figure}
+
+On constate que le système est bien résistant pour de faible niveau de bruit ($\sigma < 0,3$), et que
+le taux de reconnaissance reste à peu près constant dans cette tranche.
+
+\subsubsection{Signaux déteriorés}
+
+Comme décrit dans la section~\ref{sec:base_modif}, nous avons construit une autre base de musique en
+modifiant la base originale. Ces signaux sont censés imiter l'impression auditive lorsqu'on écoute
+les morceaux grâce à des haut-parleurs de qualité moyenne. On obtient alors un taux de
+reconnaissance de 72.5\% en utilsant le même protocole que précédement.
 \clearpage
 \tableofcontents
 \end{document}
