@@ -1,6 +1,7 @@
 import numpy as np
 from hashlib import sha1
 from db import Database
+from sqlite3 import Binary
 
 
 
@@ -159,33 +160,39 @@ class MatchingPursuit:
                 
 
 
-    def match(self,s):
+    def match(self,s,db,soffset=0,offsets={}):
 
         y = self.sparse(s)
         # keys for the signal
         keys = self.extractKeys(y)
-        db = Database()
         
-        offsets = {}
         # Quantiztion factor for the offsets
-        qt = max(self.dictionary.sizes)/2
+        qt = max(self.dictionary.sizes)
         for hash_key,offset in keys:
-            result = db.selectFingerprints(hash_key)
+            result = db.selectFingerprints(Binary(hash_key)[0:5])
             for r in result:
                 if not r[0] in offsets:
                     offsets[r[0]] = []
-                offsets[r[0]].append((r[1] - offset)//qt * qt)
+                offsets[r[0]].append((r[1]-offset-soffset)//qt * qt)
 
-        songid = None
-        max_offset = 0
+
+        maxsongid = None
+        max_offset = 0.
+        second_max = 0.
         # proceed the histogram
         for song,o in offsets.items():
             # extract the most common offset
             tmp_max = o.count(max(set(o), key=o.count))
-            if tmp_max > max_offset:
+            if tmp_max >= max_offset:
+                second_max = max_offset
                 max_offset = tmp_max
-                songid = song
-
+                maxsongid = song
+            elif tmp_max > second_max:
+                second_max = tmp_max
+    
+        songid = None
+        if max_offset > 4 and (second_max == 0 or max_offset/second_max > 1+0.6/np.log(max_offset)):
+            songid = maxsongid
         return songid,offsets
 
 
